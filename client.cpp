@@ -1,10 +1,4 @@
-#include <iostream>
-#include <cstring>
-#include <string>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include "main.hpp"
 
 int main()
 {

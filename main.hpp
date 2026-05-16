@@ -12,6 +12,8 @@
 #include <cerrno>
 #include <sys/epoll.h>
 #include <map>
+#include <arpa/inet.h>
+
 
 struct Client
 {
@@ -21,6 +23,8 @@ struct Client
     bool complete;
 };
 
-std::map<int, Client> Clients;
+extern std::map<int, Client> Clients;
+
+int server();
 
 #endif

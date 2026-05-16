@@ -1,8 +1,9 @@
-#include "server.hpp"
+#include "main.hpp"
 
 #define MAX_EVENTS 10
+std::map<int, Client> Clients;
 
-int main()
+int server()
 {
     int serverSocket;
 
@@ -68,7 +69,7 @@ int main()
                     else
                     {
                         if (errno == EAGAIN || errno == EWOULDBLOCK)
-                            std::cout << "block end" << std::endl;;
+                            std::cout << "block end" << std::endl;
                         else
                             std::cout << "real recv error";
                     }
@@ -76,36 +77,32 @@ int main()
             }
             else
             {
-                // while (true)
+                char buffer[1024] = {0};
+                int n = recv(events[i].data.fd, buffer, sizeof(buffer), 0);
+                int fd = events[i].data.fd;
+                Client& client = Clients[fd]; // just for readability! instead of Clients[new_client.fd].fd
+                if (n > 0)
                 {
-                    char buffer[1024] = {0};
-                    int n = recv(events[i].data.fd, buffer, sizeof(buffer), 0);
-                    int fd = events[i].data.fd;
-                    Client& client = Clients[fd]; // just for readability! instead of Clients[new_client.fd].fd
-                    if (n > 0)
-                    {
-                        client.read_data.append(buffer, n);
-                        //request parser here!
-                        // if (client.complete == true) if we found /r/r/n then flag it with true
-                        std::cout << "client : " << client.read_data;
-                    }
-                    else if (errno == EAGAIN || errno == EWOULDBLOCK)//delete later
-                        std::cout << "block end" << std::endl;
-                    else if (n == 0)
-                    {
-                        close(fd);
-                        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
-                        //erase this fd's client's data from the map!
-                        Clients.erase(fd);
-                        std::cout << "block end" << std::endl;
-                    }
-                    else
-                    {
-                        throw std::runtime_error("chihaja!");
-                    }
+                    client.read_data.append(buffer, n);
+                    //request parser here!
+                    // if (client.complete == true) if we found /r/r/n then flag it with true
+                    std::cout << "client : " << client.read_data;
                 }
-                //here check the response!
-                
+                else if (errno == EAGAIN || errno == EWOULDBLOCK)//delete later
+                    std::cout << "block end" << std::endl;
+                else if (n == 0)
+                {
+                    close(fd);
+                    epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
+                    //erase this fd's client's data from the map!
+                    Clients.erase(fd);
+                    std::cout << "block end" << std::endl;
+                }
+                else
+                {
+                    throw std::runtime_error("chihaja!");
+                }
+                //here check the response! 
             }
         }  
     }
