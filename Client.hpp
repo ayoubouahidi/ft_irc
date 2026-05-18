@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <bits/stdc++.h>
+#include <unistd.h>
 
 typedef std::vector<std::string> writebuffer_t;
 
@@ -40,8 +42,9 @@ class Client {
         void removeChannel(const std::string& channel);
         void setIsOperator(bool isOperator);
         void setIsRegistered(bool isRegistered);
-        void appendToReadBuffer(const std::string& data);
-        void appendToWriteBuffer(const std::string& data);
+        void appendToReadBuffer(const std::string& data); // append to buff
+        std::string getNextmessage(); // return the extracted message 
+        void appendToWriteBuffer(const std::string& data); // 
 
         ~Client();
 

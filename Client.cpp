@@ -1,5 +1,4 @@
 #include "Client.hpp"
-#include <unistd.h>
 
 
 // constructors
@@ -89,9 +88,21 @@ Client::~Client() {
 }
 
 
-void appendToReadBuffer(const std::string& data)
+void Client::appendToReadBuffer(const std::string& data)
 {
-    // recv 
-    // concatinate all the dataj 
+    this->readBuffer = data + this->readBuffer;
+}
+
+std::string Client::getNextmessage()
+{
+    size_t pos = 0;
+    std::string message;
+
+    pos = this->readBuffer.find("\r\n");
+    if (pos == std::string::npos)
+        return "";
+    message = readBuffer.substr(0 , pos);
+    readBuffer.erase(0, pos);
+    return message;
 }
 
