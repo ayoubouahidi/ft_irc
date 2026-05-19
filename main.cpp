@@ -1,26 +1,39 @@
-#include "main.hpp"
+#include "server.hpp"
 
-struct arguments
+bool running = true;
+
+void sig_handle(int sig)
 {
-    size_t port;
-    std::string password;
-};
+    if (sig == SIGINT)
+    {
+        running = false;
+    }
+}
 
 int main(int ac, char **av)
 {
-    arguments arg;
-    (void)av;
+    Server server;
+
     if (ac != 3)
         throw std::runtime_error("Invalid arguments number!");
     av++;
-    for (size_t i = 0; i < av[0][i]; i++)
-        if (!isdigit(av[1][i]))
+    for (size_t i = 0; i < strlen(av[0]); i++)
+        if (!isdigit(av[0][i]))
             throw std::runtime_error("Invalid Port");
-    arg.port = std::stoi(av[0]);
-    arg.password = av[1];
-    std::cout << "port is : " << arg.port << std::endl;
-    std::cout << "port is : " << arg.password << std::endl;
-    // // if (!server())
-    // //     throw std::runtime_error("error");
+    server.setPort(std::stoi(av[0]));
+    server.setPaswd(av[1]);
+    std::cout << "port is : " << server.getPort() << std::endl;
+    std::cout << "password is : " << server.getPaswd() << std::endl;
+    try
+    {
+        signal(SIGINT, sig_handle);
+        signal(SIGQUIT, SIG_IGN);
+        if (!server.server_init())
+            throw std::runtime_error("error");
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
     return 0;
 }

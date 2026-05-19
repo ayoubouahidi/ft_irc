@@ -6,6 +6,7 @@ CXXFLAGS = -Wall -Werror -Wextra
 
 SRCs = main.cpp\
 		server.cpp\
+		server_init.cpp\
 
 OBJs = $(SRCs:.cpp=.o)
 
