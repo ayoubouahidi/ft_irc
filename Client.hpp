@@ -16,7 +16,7 @@ class Client{
         void setUserName(std::string username);
         void setRealName(std::string realname);
         void isRegistered(bool status);
-        void is(bool status);
+        void isPassVer(bool status);
         
         //setters
         std::string getNickName();
