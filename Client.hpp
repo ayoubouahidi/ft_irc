@@ -7,7 +7,7 @@ class Client{
         std::string nickname;
         std::string username;
         std::string realname;
-        bool isRegi
+        bool isRegistered
 };
 
 #endif
