@@ -5,7 +5,8 @@
 class Client{
     private:
         std::string nickname;
-        std::string username
+        std::string username;
+        std::string 
 };
 
 #endif
