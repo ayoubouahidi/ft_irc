@@ -8,7 +8,7 @@ class Server{
         std::string _password;
     public:
         Server(std::string password);
-        void setPassword(std::string password);
+        std::string getPassword() const;
 };
 
 #endif
