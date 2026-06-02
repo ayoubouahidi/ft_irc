@@ -14,7 +14,7 @@ class Client{
         std::string getNickName();
         std::string setNickName(std::string nick);
         std::string getUserName();
-        std::string getUserName(std::string);
+        std::string setUserName(std::string);
 };
 
 #endif
