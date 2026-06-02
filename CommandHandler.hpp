@@ -13,7 +13,6 @@
 class Client;
 class Server;
 
-
 struct Message
 {
     std::string prefix;
