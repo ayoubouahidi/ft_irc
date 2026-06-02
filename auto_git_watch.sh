@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MSG="auto update"
+MSG="new version"
 
 while inotifywait -r -e modify,create,delete .; do
     git add .

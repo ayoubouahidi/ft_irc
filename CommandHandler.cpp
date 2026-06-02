@@ -32,7 +32,6 @@ void myPingCommand(Client& client, std::vector<std::string>& params, Server& ser
 }
 
 
-
 CommandHandler::CommandHandler(){
     _commands_map["PING"] = &myPingCommand;
 }
