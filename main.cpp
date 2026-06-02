@@ -2,7 +2,7 @@
 
 int main(){
     std::string _message;
-    std::string text = "PING :123 hamza yass ibw";
+    std::string text = "PING :123";
     CommandHandler cmdH;
     cmdH.parseMessage(text);
 }
