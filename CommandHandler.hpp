@@ -28,7 +28,6 @@ class CommandHandler{
     public:
         CommandHandler();
         Message parseMessage(const std::string& raw);
-
         void executeCommand(Message& msg, Client& client, Server& server);
 };
 
