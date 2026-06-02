@@ -15,15 +15,15 @@ class Client{
         void setNickName(std::string nickname);
         void setUserName(std::string username);
         void setRealName(std::string realname);
-        void isRegistered(bool status);
-        void isPassVerified(bool status);
+        void getisRegistered(bool status);
+        void getisPassVerified(bool status);
         
         //setters
         std::string getNickName();
         std::string getUserName();
         std::string getRealName();
-        bool getisRegistered(bool status);
-        bool getisPassVerified(bool status);
+        bool getIsRegistered(bool status);
+        bool getIsPassVerified(bool status);
 
 };
 
