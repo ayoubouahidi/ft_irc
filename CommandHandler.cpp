@@ -38,5 +38,7 @@ CommandHandler::CommandHandler(){
 }
 
 void CommandHandler::executeCommand(Message& msg, Client& client, Server& server){
-    if(_commands_map.find(msg.command) != _commands_map.end())
+    if(_commands_map.find(msg.command) != _commands_map.end()){
+
+    }else
 }
