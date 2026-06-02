@@ -13,11 +13,12 @@ class Client{
     public:
     
         void setNickName(std::string nickname);
+        void setUserName(std::string username);
+        
+        void setRealName(std::string realname);
         std::string getNickName();
         std::string getUserName();
         std::string getRealName();
-        void setUserName(std::string username);
-        void setRealName(std::string realname);
 };
 
 #endif
