@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+#include <>
 
 class Client{
     private:
@@ -10,7 +11,7 @@ class Client{
         bool isRegistered;
         bool passVerified;
     public:
-        
+
 };
 
 #endif
