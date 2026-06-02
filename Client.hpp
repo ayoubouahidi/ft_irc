@@ -8,7 +8,9 @@ class Client{
         std::string username;
         std::string realname;
         bool isRegistered;
-        bool passVeri
+        bool passVerified;
+    public:
+        
 };
 
 #endif
