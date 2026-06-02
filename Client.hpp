@@ -10,12 +10,12 @@ class Client{
         std::string _realname;
         bool _isRegistered;
         bool _passVerified;
-    public:
+        public:
+        void setNickName(std::string nickname);
         std::string getNickName();
         std::string getUserName();
-        void setNickName(std::string nickname);
-        void setUserName(std::string username);
         std::string getRealName();
+        void setUserName(std::string username);
         void setRealName(std::string realname);
 };
 
