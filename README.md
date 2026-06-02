@@ -2,7 +2,7 @@
 A custom IRC server implemented in C++98.
 
 
-##Architecture & Command Dispatcher
+## Architecture & Command Dispatcher
 
 Our IRC server uses a simple and scalable architecture to handle incoming commands. Instead of using a long chain of `if-else` statements, we use a **Command Dispatcher**.
 
