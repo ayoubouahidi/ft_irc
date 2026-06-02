@@ -39,7 +39,7 @@ CommandHandler::CommandHandler(){
 
 void CommandHandler::executeCommand(Message& msg, Client& client, Server& server){
     if(_commands_map.find(msg.command) != _commands_map.end()){
-        _commands_map[msg.command](client, msg.paramters);
+        _commands_map[msg.command](client, msg.paramters,server);
     }else{
         std::cout << "Command [" << msg.command << "] not found." << std::endl;
     }
