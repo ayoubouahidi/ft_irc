@@ -4,7 +4,7 @@
 
 int main(){
     std::string _message;
-    std::string text = "USER hamza 0 * :Hamza User";
+    std::string text = ":server 001 hamza :Welcome to ft_irc";
     CommandHandler cmdH;
     Client mytestclient;
     Server mytestserver;
