@@ -3,7 +3,7 @@
 
 
 class Client{
-    
+    private:
 };
 
 #endif
