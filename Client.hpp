@@ -22,8 +22,8 @@ class Client{
         std::string getNickName();
         std::string getUserName();
         std::string getRealName();
-        bool isRegistered(bool status);
-        bool isPassVerified(bool status);
+        bool getisRegistered(bool status);
+        bool getisPassVerified(bool status);
 
 };
 
