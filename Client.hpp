@@ -5,16 +5,16 @@
 
 class Client{
     private:
-        std::string nickname;
-        std::string username;
-        std::string realname;
+        std::string _nickname;
+        std::string _username;
+        std::string _realname;
         bool isRegistered;
         bool passVerified;
     public:
         std::string getNickName();
         std::string setNickName(std::string nick);
         std::string getUserName();
-        std::string setUserName(std::string user);
+        std::string setUserName(std::string username);
 };
 
 #endif
