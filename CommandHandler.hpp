@@ -21,7 +21,6 @@ struct Message
     std::vector<std::string> paramters;
 };
 
-
 typedef void (*CommandFunction)(Client&, std::vector<std::string>&, Server&);
 
 class CommandHandler{
