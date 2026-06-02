@@ -11,7 +11,7 @@ class Client{
         bool isRegistered;
         bool passVerified;
     public:
-        std::string n
+        std::string nick
 };
 
 #endif
