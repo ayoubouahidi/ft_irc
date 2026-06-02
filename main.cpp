@@ -1,4 +1,6 @@
 #include "CommandHandler.hpp"
+#include "Client.hpp"
+#include "Server.hpp"
 
 int main(){
     std::string _message;
