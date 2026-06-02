@@ -14,6 +14,7 @@ class Client{
         bool _passVerified;
     public:
 
+        Client();
         //setters
         void setNickName(std::string nickname);
         void setUserName(std::string username);
