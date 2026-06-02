@@ -10,7 +10,8 @@ class Client{
         std::string _realname;
         bool _isRegistered;
         bool _passVerified;
-        public:
+    public:
+    
         void setNickName(std::string nickname);
         std::string getNickName();
         std::string getUserName();
