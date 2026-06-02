@@ -4,7 +4,7 @@
 
 int main(){
     std::string _message;
-    std::string text = "PoNG :123";
+    std::string text = "PING :123";
     CommandHandler cmdH;
     Client mytestclient;
     Server mytestserver;
