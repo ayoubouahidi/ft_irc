@@ -6,6 +6,6 @@ int main(){
     std::string _message;
     std::string text = "PING :123";
     CommandHandler cmdH;
-    Message Msg    cmdH.parseMessage(text);
+    Message Msg = cmdH.parseMessage(text);
     cmdH.executeCommand();
 }
