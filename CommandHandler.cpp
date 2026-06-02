@@ -37,6 +37,6 @@ CommandHandler::CommandHandler(){
     _commands_map["PING"] = &myPingCommand;
 }
 
-void ::executeCommand(Message& msg, Client& client, Server& server){
+void Coma::executeCommand(Message& msg, Client& client, Server& server){
 
 }
