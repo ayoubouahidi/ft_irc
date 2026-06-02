@@ -16,6 +16,7 @@ class Client{
         std::string getUserName();
         std::string setUserName(std::string username);
         std::string getRealName();
+        std::string setRealName();
 };
 
 #endif
