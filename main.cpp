@@ -9,5 +9,5 @@ int main(){
     Client mytestclient;
     Server mytestserver;
     Message Msg = cmdH.parseMessage(text);
-    cmdH.executeCommand(Msg, My);
+    cmdH.executeCommand(Msg, mytestclient, my);
 }
