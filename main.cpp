@@ -4,10 +4,10 @@
 
 int main(){
     std::string _message;
-    std::string text = ":server 001 hamza :Welcome to ft_irc";
+    std::string text = "PING :123";
     CommandHandler cmdH;
     Client mytestclient;
-    Server mytestserver;
+    Server mytestserver("1234");
     Message Msg = cmdH.parseMessage(text);
     cmdH.executeCommand(Msg, mytestclient, mytestserver);
 }
