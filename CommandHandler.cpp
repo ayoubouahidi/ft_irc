@@ -52,6 +52,7 @@ void passCommand(Client& client, std::vector<std::string>& params, Server& serve
 
 CommandHandler::CommandHandler(){
     _commands_map["PING"] = &myPingCommand;
+    _commands_map
 }
 
 void CommandHandler::executeCommand(Message& msg, Client& client, Server& server){
