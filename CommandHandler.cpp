@@ -40,6 +40,7 @@ void passCommand(Client& client, std::vector<std::string>& params, Server& serve
     }
     if(client.getIsRegistered()){
         client.sendMessage("462 :Unauthorized command (already registered)");
+        return;
     }
 
     if(params[0] == server.getPassword()){
@@ -53,6 +54,17 @@ void passCommand(Client& client, std::vector<std::string>& params, Server& serve
 CommandHandler::CommandHandler(){
     _commands_map["PING"] = &myPingCommand;
     _commands_map["PASS"] = &passCommand;
+    _commands_map["NICK"] = &nickCommand;
+}
+
+
+
+void nickCommand(Client& client,std::vector<std::string>& params, Server& server){
+    if(params.empty()){
+        client.sendMessage("431: No nickname given");
+        return;
+    }
+    client.setNickName(params[0]);
 }
 
 void CommandHandler::executeCommand(Message& msg, Client& client, Server& server){
