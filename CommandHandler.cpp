@@ -32,6 +32,23 @@ void myPingCommand(Client& client, std::vector<std::string>& params, Server& ser
     std::cout << "==== PING COMMAND IS RUNNING! ====" << std::endl;
 }
 
+void passCommand(Client& client, std::vector<std::string>& params, Server& server){
+    //chech password is empty
+    if(params.empty()){
+        client.sendMessage("461 :Not enough parameters");
+        return;
+    }
+    if(client.getIsRegistered()){
+        client.sendMessage("462 :Unauthorized command (already registered)");
+    }
+
+    if(params[0] == server.getPassword()){
+        client.setIsPassVerified(true);
+    }else{
+        client.sendMessage("464 :Password incorrect");
+    }
+}
+
 
 CommandHandler::CommandHandler(){
     _commands_map["PING"] = &myPingCommand;
