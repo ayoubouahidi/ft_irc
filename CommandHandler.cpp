@@ -13,11 +13,18 @@ Message CommandHandler::parseMessage(const std::string& raw){
     }else
         msg.command = prefix;
     std::string params;
+
     while (iss >> params)
     {
-        if(params[0] == ':')
+        std::string restOfline;
+        if(params[0] == ':'){
             params = params.substr(1);
-        msg.paramters.push_back(params);
+            std::getline(iss,restOfline);
+            msg.paramters.push_back(params + restOfline);
+            break;
+        }else{
+            msg.paramters.push_back(params);
+        }
     }
     std::cout << "it's prefix : " << msg.prefix << std::endl;
     std::cout << "it's command : " << msg.command << std::endl;
@@ -33,7 +40,6 @@ void myPingCommand(Client& client, std::vector<std::string>& params, Server& ser
 }
 
 void passCommand(Client& client, std::vector<std::string>& params, Server& server){
-    //chech password is empty
     if(params.empty()){
         client.sendMessage("461 :Not enough parameters");
         return;
@@ -55,6 +61,13 @@ void nickCommand(Client& client,std::vector<std::string>& params, Server& server
         client.sendMessage("431: No nickname given");
         return;
     }
+    std::string wantedname = params[0];
+    for(size_t i = 0; i < wantedname.size() ;i++){
+        if(wantedname[i] == ' ' || wantedname[i] == '#'){
+            client.sendMessage("432 :Erroneous nickname");
+            return;
+        }
+    }
     client.setNickName(params[0]);
 }
 
@@ -68,14 +81,18 @@ void userCommand(Client& client, std::vector<std::string>& params,  Server& serv
         client.sendMessage("461 :Not enough parameters");
         return;
     }
-
-    if(client.getIsPassVerified() == true && client.getNickName().empty() == false){
-        client.sendMessage("001 :Welcome to the ft_irc Network");
-        return;
+    if (client.getIsPassVerified() == true && client.getNickName().empty() == false) {
+        
+        client.setIsRegistered(true);
+        client.sendMessage(":ft_irc 001 " + client.getNickName() + " :Welcome to the ft_irc Network");
+        client.sendMessage(":ft_irc 002 " + client.getNickName() + " :Your host is ft_irc, running version 1.0");
+        client.sendMessage(":ft_irc 003 " + client.getNickName() + " :This server was created today");
+        client.sendMessage(":ft_irc 004 " + client.getNickName() + " ft_irc 1.0 o o");
     }
 
     client.setUserName(params[0]);
     client.setRealName(params[3]);
+
 }
 
 
