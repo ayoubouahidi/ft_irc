@@ -7,7 +7,7 @@ int main(){
     std::string text = "USER hamza 0 * :Hamza User";
     CommandHandler cmdH;
     Client mytestclient;
-    Server mytestserver("1234"); // Server password is "1234"
+    Server mytestserver("1234");
     Message Msg = cmdH.parseMessage(text);
     cmdH.executeCommand(Msg, mytestclient, mytestserver);
 
