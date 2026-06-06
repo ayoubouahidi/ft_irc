@@ -19,4 +19,8 @@ int main(){
     Message nickMsg = cmdH.parseMessage("NICK mySuperNick");
     cmdH.executeCommand(nickMsg, mytestclient, mytestserver);
 
+    std::cout << "\n--- SENDING QUIT ---" << std::endl;
+    Message quitMsg = cmdH.parseMessage(":hamza!user@host QUIT :Leaving");
+    cmdH.executeCommand(quitMsg,mytestclient,mytestserver);
+
 }

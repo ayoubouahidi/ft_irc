@@ -40,10 +40,8 @@ void myPingCommand(Client& client, std::vector<std::string>& params, Server& ser
         client.sendMessage("409: No origin specified !");
         return;
     }
-    std::string pongMessage = "PONG: " + params[0];
+    std::string pongMessage = "PONG:" + params[0];
     client.sendMessage(pongMessage);
-
-    std::cout << "==== PING COMMAND IS RUNNING! ====" << std::endl;
 }
 
 void passCommand(Client& client, std::vector<std::string>& params, Server& server){
@@ -103,11 +101,23 @@ void userCommand(Client& client, std::vector<std::string>& params,  Server& serv
 }
 
 
+void quitCommand(Client& client, std::vector<std::string>& params, Server& server) {
+    std::string reason = "Client Quit";
+    if (!params.empty()) {
+        reason = params[0];
+    }
+    std::cout << "Client " << client.getNickName() << " is quitting. Reason: " << reason << std::endl;
+    client.setIsQuitting(true);
+}
+
+
+
 CommandHandler::CommandHandler(){
     _commands_map["PING"] = &myPingCommand;
     _commands_map["PASS"] = &passCommand;
     _commands_map["NICK"] = &nickCommand;
     _commands_map["USER"] = &userCommand;
+    _commands_map["QUIT"] = &quitCommand;
 }
 
 

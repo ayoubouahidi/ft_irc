@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include <unistd.h>
 #include "Client.hpp"
 #include "Server.hpp"
 

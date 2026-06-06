@@ -4,6 +4,7 @@
 Client::Client(){
     _isRegistered = false;
     _passVerified = false;
+    _isQuitting = false;
 }
 
 void Client::setNickName(std::string nickname){
@@ -26,6 +27,10 @@ void Client::setIsPassVerified(bool status){
     _passVerified = status;
 }
 
+void Client::setIsQuitting(bool status){
+    _isQuitting = status;
+}
+
 
 std::string Client::getNickName(){
     return _nickname;
@@ -44,6 +49,10 @@ bool Client::getIsRegistered(){
 
 bool Client::getIsPassVerified(){
     return _passVerified;
+}
+
+bool Client::getIsQuitting(){
+    return _isQuitting;
 }
 
 

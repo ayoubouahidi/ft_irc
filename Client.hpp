@@ -12,6 +12,7 @@ class Client{
         std::string _realname;
         bool _isRegistered;
         bool _passVerified;
+        bool _isQuitting;
     public:
 
         Client();
@@ -21,6 +22,7 @@ class Client{
         void setRealName(std::string realname);
         void setIsRegistered(bool status);
         void setIsPassVerified(bool status);
+        void setIsQuitting(bool status);
         
         //getters
         std::string getNickName();
@@ -28,6 +30,7 @@ class Client{
         std::string getRealName();
         bool getIsRegistered();
         bool getIsPassVerified();
+        bool getIsQuitting();
 
 
         void sendMessage(std::string msg);
