@@ -36,6 +36,13 @@ Message CommandHandler::parseMessage(const std::string& raw){
 
 
 void myPingCommand(Client& client, std::vector<std::string>& params, Server& server) {
+    if(params.empty()){
+        client.sendMessage("409: No origin specified !");
+        return;
+    }
+    std::string pongMessage = "PONG: " + params[0];
+    client.sendMessage(pongMessage);
+
     std::cout << "==== PING COMMAND IS RUNNING! ====" << std::endl;
 }
 
