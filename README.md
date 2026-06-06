@@ -21,6 +21,3 @@ _commands_map["PING"] = &myPingCommand;
 ```
 
 When a parsed `Message` arrives, the `executeCommand` function looks up the command name in the `std::map`. If it finds a match, it executes the correct function and passes the required data (`Client`, `Parameters`, and `Server`). If not, it handles the unknown command smoothly.
-
-
-
