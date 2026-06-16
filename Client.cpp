@@ -1,10 +1,16 @@
 #include "Client.hpp"
+#include <sys/socket.h> // Zdnaha 3la 9bel send()
 
 
 Client::Client(){
     _isRegistered = false;
     _passVerified = false;
     _isQuitting = false;
+    _fd = -1; // Par defaut ma-3ndouch socket
+}
+
+void Client::setFd(int fd){
+    _fd = fd;
 }
 
 void Client::setNickName(std::string nickname){
@@ -55,8 +61,12 @@ bool Client::getIsQuitting(){
     return _isQuitting;
 }
 
-
-
-void Client::sendMessage(std::string msg){
-    std::cout <<"-> Sending to client: " << msg << std::endl;
+void Client::sendMessage(std::string msg) {
+    // Zidna \r\n f l-lekher 7it protocol IRC kay-fardha
+    std::string final_msg = msg + "\r\n";
+    if (_fd != -1) {
+        send(_fd, final_msg.c_str(), final_msg.length(), 0);
+    }
+    // T9der t-khli cout l-ta7t ghir bach t-b9a t-chouf chno kay-w9e3 f server
+    std::cout << "DEBUG -> Sent to [" << _nickname << "]: " << msg << std::endl;
 }

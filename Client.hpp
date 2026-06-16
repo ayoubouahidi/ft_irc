@@ -2,6 +2,7 @@
 #define CLIENT_HPP
 
 #include <string>
+
 #include <iostream>
 
 
@@ -13,10 +14,13 @@ class Client{
         bool _isRegistered;
         bool _passVerified;
         bool _isQuitting;
+        int _fd; // Ra9m dyal socket
+
     public:
 
         Client();
         //setters
+        void setFd(int fd);
         void setNickName(std::string nickname);
         void setUserName(std::string username);
         void setRealName(std::string realname);
@@ -25,6 +29,7 @@ class Client{
         void setIsQuitting(bool status);
         
         //getters
+        int getFd();
         std::string getNickName();
         std::string getUserName();
         std::string getRealName();
