@@ -30,6 +30,11 @@ class Server
     private :
         size_t port;
         std::string password;
+        int serverSocket;
+        int epollfd;
+        struct epoll_event event;
+        struct epoll_event events[MAX_EVENTS];
+        std::map<int, Client> Clients;
     public :
         Server();
         ~Server();
@@ -37,10 +42,13 @@ class Server
         void        setPaswd(const std::string& pswd);
         size_t      getPort() const; 
         std::string getPaswd() const;
-        int         server_init();
+        void        server_init();
+        void        createSocket();
+        void        setupEpoll();
+        void        acceptClient();
+        void        receiveFromClient(int fd);
 };
 
 extern bool running;
-extern std::map<int, Client> Clients;
 
 #endif

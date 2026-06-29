@@ -17,10 +17,10 @@ int main(int ac, char **av)
     if (ac != 3)
         throw std::runtime_error("Invalid arguments number!");
     av++;
-    for (size_t i = 0; i < strlen(av[0]); i++)
-        if (!isdigit(av[0][i]))
-            throw std::runtime_error("Invalid Port");
-    server.setPort(std::stoi(av[0]));
+    int prt = std::stoi(av[0]);
+    if (prt < 1024 || prt > 65535)
+        throw std::runtime_error("invalid port");
+    server.setPort(prt);
     server.setPaswd(av[1]);
     std::cout << "port is : " << server.getPort() << std::endl;
     std::cout << "password is : " << server.getPaswd() << std::endl;
@@ -28,12 +28,11 @@ int main(int ac, char **av)
     {
         signal(SIGINT, sig_handle);
         signal(SIGQUIT, SIG_IGN);
-        if (!server.server_init())
-            throw std::runtime_error("error");
+        server.server_init();
     }
     catch(const std::exception& e)
     {
-        std::cout << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
     return 0;
 }
