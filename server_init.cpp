@@ -68,22 +68,29 @@ void    Server::receiveFromClient(int fd)
     if (n > 0)
     {
         client.read_data.append(buffer, n);
-        //request parser here!
-        // if (client.complete == true) if we found /r/r/n then flag it with true
-        std::cout << "client : " << client.read_data;
+        while (true)
+        {
+            size_t pos = client.read_data.find("\r\n");
+            if (pos == std::string::npos)
+                break ;
+            std::string line = client.read_data.substr(0, pos);
+            client.read_data.erase(0, pos + 2);
+            //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
+        }
     }
-    else if (errno == EAGAIN || errno == EWOULDBLOCK)//delete later
-        std::cout << "block end" << std::endl;
-    else if (n == 0)
+    else if (n == 0) // disconnect client
     {
         close(new_fd);
         epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
-        //erase this fd's client's data from the map!
         Clients.erase(new_fd);
-        std::cout << "block end" << std::endl;
     }
     else
-        return ;    
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            close(new_fd);
+            epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
+            Clients.erase(new_fd);
+        }
     //here check the response! sendv
 }
 
