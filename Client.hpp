@@ -45,6 +45,10 @@ class Client {
         void appendToReadBuffer(const std::string& data); // append to buff
         std::string getNextmessage(); // return the extracted message 
         void appendToWriteBuffer(const std::string& data); // 
+        void        clearBuffer();
+        void        sendMsg(const std::string& message) const;
+        std::string getPrefix() const;
+        
 
         ~Client();
 

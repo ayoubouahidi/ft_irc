@@ -1,4 +1,5 @@
 #include "Client.hpp"
+#include <sys/socket.h>
 
 
 // constructors
@@ -102,7 +103,28 @@ std::string Client::getNextmessage()
     if (pos == std::string::npos)
         return "";
     message = readBuffer.substr(0 , pos);
-    readBuffer.erase(0, pos);
+    readBuffer.erase(0, pos + 2);
     return message;
+}
+
+
+void Client::clearBuffer()
+{
+    this->readBuffer.clear();
+    this->writeBuffer.clear();
+}
+
+void Client::sendMsg(const std::string& message) const
+{
+    if (send(fd, message.c_str(), message.length(), 0) == -1)
+    {
+        std::cerr << "Error sending message to client: " << strerror(errno) << std::endl;
+    }
+}
+
+std::string Client::getPrefix() const
+{
+    std::string prefix = ":" + this->nickname + "!" + this->username + "@" + this->hostname;
+    return prefix;
 }
 
