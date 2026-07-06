@@ -36,6 +36,7 @@ void inviteCommand(Client &client, std::vector<std::string> &params, Server &ser
 void topicCommand(Client &client, std::vector<std::string> &params, Server &server);
 void modeCommand(Client &client, std::vector<std::string> &params, Server &server);
 void noticeCommand(Client &client, std::vector<std::string> &params, Server &server);
+void registerClient(Client &client);
 
 class CommandHandler
 {

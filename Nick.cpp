@@ -7,26 +7,38 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
         client.sendMsg("431 :No nickname given");
         return;
     }
-    std::string wantedname = params[0];
-    for (size_t i = 0; i < wantedname.size(); i++)
+
+    std::string nickname = params[0];
+
+    if (nickname.empty())
     {
-        if (wantedname[i] == ' ' || wantedname[i] == '#' || wantedname[i] == '*' || wantedname[i] == ':')
+        client.sendMsg("431 :No nickname given");
+        return;
+    }
+
+    for (size_t i = 0; i < nickname.size(); i++)
+    {
+        if (nickname[i] == ' ' || nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
         {
             client.sendMsg("432 :Erroneous nickname");
             return;
         }
     }
-    Client *check_name_is_tacked = server.getClientByNickname(wantedname);
-    if (check_name_is_tacked && client.getNickname() != wantedname)
+
+    Client *tmp = server.getClientByNickname(nickname);
+
+    if (tmp && tmp != &client)
     {
         client.sendMsg("433 :Nickname is already in use");
+        return;
     }
-    else
-    {
-        std::string oldNick = client.getNickname();
-        client.setNickname(wantedname);
-        if (!oldNick.empty() && oldNick != wantedname) {
-            server.broadcast(":" + oldNick + " NICK " + wantedname, "");
-        }
-    }
+
+    std::string oldNick = client.getNickname();
+
+    client.setNickname(nickname);
+
+    if (!oldNick.empty() && oldNick != nickname)
+        server.broadcast(":" + oldNick + " NICK :" + nickname, "");
+
+    registerClient(client);
 }
