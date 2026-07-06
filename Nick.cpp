@@ -10,12 +10,6 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     std::string nickname = params[0];
 
-    if (nickname.empty())
-    {
-        client.sendMsg("431 :No nickname given");
-        return;
-    }
-
     for (size_t i = 0; i < nickname.size(); i++)
     {
         if (nickname[i] == ' ' || nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
