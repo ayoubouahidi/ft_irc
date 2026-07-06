@@ -4,7 +4,7 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
 {
     if (params.empty())
     {
-        client.sendMessage("461 :Not enough parameters");
+        client.sendMsg("461 :Not enough parameters");
         return;
     }
     std::string nameChannel = params[0];
@@ -13,7 +13,7 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
     }
     else
     {
-        client.sendMessage("502 :Cant change mode for other users");
+        client.sendMsg("502 :Cant change mode for other users");
         return;
     }
     Channel *channel = server.getChannelByName(nameChannel);
@@ -22,11 +22,11 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
         if (params.size() == 1)
         {
             std::string activeModes = "+";
-            if (channel->getIsInviteOnly())
+            if (channel->isInviteOnly())
             {
                 activeModes += "i";
             }
-            if (channel->getIsTopicRestricted())
+            if (channel->isTopicRestricted())
             {
                 activeModes += "t";
             }
@@ -34,11 +34,11 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
             {
                 activeModes += "k";
             }
-            if (channel->getLimit() > 0)
+            if (channel->getUserLimit() > 0)
             {
                 activeModes += "l";
             }
-            client.sendMessage("324 " + client.getNickName() + " " + params[0] + " " + activeModes);
+            client.sendMsg("324 " + client.getNickname() + " " + params[0] + " " + activeModes);
             return;
         }
         else
@@ -60,11 +60,11 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
                     }
                     else if (mode[i] == 'i')
                     {
-                        channel->setIsInviteOnly(isAdding);
+                        channel->setInviteOnly(isAdding);
                     }
                     else if (mode[i] == 't')
                     {
-                        channel->setIsTopicRestricted(isAdding);
+                        channel->setTopicRestricted(isAdding);
                     }
                     else if (mode[i] == 'k')
                     {
@@ -82,11 +82,11 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
                             if (argIndex < params.size()) {
                                 std::stringstream ss(params[argIndex]);
                                 ss >> limit;
-                                channel->setLimit(limit);
+                                channel->setUserLimit(limit);
                                 argIndex++;
                             }
                         } else {
-                            channel->setLimit(0);
+                            channel->setUserLimit(0);
                         }
                     }
                     else if (mode[i] == 'o')
@@ -106,10 +106,10 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
                     else
                     {
                         std::string unknownchar(1, mode[i]);
-                        client.sendMessage("472 " + unknownchar + " :is unknown mode char to me");
+                        client.sendMsg("472 " + unknownchar + " :is unknown mode char to me");
                     }
                 }
-                std::string message = ":" + client.getNickName() + " MODE " + params[0] + " " + params[1];
+                std::string message = ":" + client.getNickname() + " MODE " + params[0] + " " + params[1];
                 // Zid l-parametres f l-message dyal l-broadcast (bhal s-miya awla password)
                 for (size_t i = 2; i < argIndex; i++) {
                     if (i < params.size()) {
@@ -120,14 +120,14 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
             }
             else
             {
-                client.sendMessage("482 " + params[0] + " :You're not channel operator");
+                client.sendMsg("482 " + params[0] + " :You're not channel operator");
                 return;
             }
         }
     }
     else
     {
-        client.sendMessage("403 " + params[0] + " :No such channel");
+        client.sendMsg("403 " + params[0] + " :No such channel");
         return;
     }
 }

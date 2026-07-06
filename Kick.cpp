@@ -3,7 +3,7 @@
 void kickCommand(Client& client, std::vector<std::string>& params, Server& server){
     std::string reason = "";
     if(params.size() < 2){
-        client.sendMessage("461 :Not enough parameters");
+        client.sendMsg("461 :Not enough parameters");
         return;
     }
 
@@ -12,47 +12,47 @@ void kickCommand(Client& client, std::vector<std::string>& params, Server& serve
 
     Channel *channel = server.getChannelByName(channelName);
     if (channel == NULL) {
-        client.sendMessage("403 " + channelName + " :No such channel");
+        client.sendMsg("403 " + channelName + " :No such channel");
         return;
     }
 
-    if (!channel->hasClient(&client)) {
-        client.sendMessage("442 " + channelName + " :You're not on that channel");
+    if (!channel->isMember(client.getFd())) {
+        client.sendMsg("442 " + channelName + " :You're not on that channel");
         return;
     }
 
-    if(channel->isOperator(&client)){
+    if(channel->isOperator(client.getFd())){
         Client *target = server.getClientByNickname(targetName);
         if(target){
-            if(channel->hasClient(target)){
+            if(channel->isMember(target->getFd())){
                 if(params.size() > 2){
                     reason = params[2];
                 }else{
                     reason = "";
                 }
-                
-                std::string kickMsg = ":" + client.getNickName() + " KICK " + channelName + " " + targetName;
+
+                std::string kickMsg = ":" + client.getNickname() + " KICK " + channelName + " " + targetName;
                 if (!reason.empty()) {
                     kickMsg += " :" + reason;
                 }
                 channel->broadcast(kickMsg);
 
                 channel->removeClient(target);
-                channel->removeOperator(target);
-                if (channel->getMembersCount() == 0) {
+                channel->removeOperator(target->getFd());
+                if (channel->getMemberCount() == 0) {
                     server.removeChannel(channelName);
                 }
             }else{
-                client.sendMessage("441 " + targetName + " " + channelName + " :They aren't on that channel");
+                client.sendMsg("441 " + targetName + " " + channelName + " :They aren't on that channel");
                 return;
             }
 
         }else{
-            client.sendMessage("441 " + targetName + " " + channelName + " :They aren't on that channel");
+            client.sendMsg("441 " + targetName + " " + channelName + " :They aren't on that channel");
             return;
         }
     }else{
-        client.sendMessage("482 " + channelName + " :You're not channel operator");
+        client.sendMsg("482 " + channelName + " :You're not channel operator");
         return;
     }
 }

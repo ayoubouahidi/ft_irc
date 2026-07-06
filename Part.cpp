@@ -5,7 +5,7 @@ void partCommand(Client &client, std::vector<std::string> &params, Server &serve
     std::string reason = "";
     if (params.empty())
     {
-        client.sendMessage("461 :Not enough parameters");
+        client.sendMsg("461 :Not enough parameters");
         return;
     }
     Channel *targetChannel = server.getChannelByName(params[0]);
@@ -13,12 +13,12 @@ void partCommand(Client &client, std::vector<std::string> &params, Server &serve
     {
         if (!targetChannel->hasClient(&client))
         {
-            client.sendMessage("442 " + params[0] + " :You're not on that channel");
+            client.sendMsg("442 " + params[0] + " :You're not on that channel");
             return;
         }
         else
         {
-            std::string partMsg = ":" + client.getNickName() + " PART " + params[0];
+            std::string partMsg = ":" + client.getNickname() + " PART " + params[0];
             if (params.size() > 1)
             {
                 partMsg += " :" + params[1];
@@ -28,13 +28,13 @@ void partCommand(Client &client, std::vector<std::string> &params, Server &serve
         }
         targetChannel->removeClient(&client);
         targetChannel->removeOperator(&client);
-        size_t numbers_Member = targetChannel->getMembersCount();
+        size_t numbers_Member = targetChannel->getMemberCount();
         if(numbers_Member == 0){
             server.removeChannel(params[0]);
         }
     }
     else
     {
-        client.sendMessage("403 " + params[0] + " :No such channel");
+        client.sendMsg("403 " + params[0] + " :No such channel");
     }
 }

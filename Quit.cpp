@@ -5,7 +5,7 @@ void quitCommand(Client& client, std::vector<std::string>& params, Server& serve
     if (!params.empty()) {
         reason = params[0];
     }
-    std::string fullMessage = ":" + client.getNickName() + " QUIT :" + reason;
+    std::string fullMessage = ":" + client.getNickname() + " QUIT :" + reason;
     client.setIsQuitting(true);
-    server.broadcast(fullMessage,client.getNickName());
+    server.broadcast(fullMessage,client.getNickname());
 }

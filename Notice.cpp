@@ -16,7 +16,7 @@ void noticeCommand(Client &client, std::vector<std::string> &params, Server &ser
         if (!channel->hasClient(&client)) {
             return;
         }
-        std::string fullMsg = ":" + client.getNickName() + " NOTICE " + target + " :" + message;
+        std::string fullMsg = ":" + client.getNickname() + " NOTICE " + target + " :" + message;
         channel->broadcast(fullMsg, &client);
         return;
     }
@@ -26,6 +26,6 @@ void noticeCommand(Client &client, std::vector<std::string> &params, Server &ser
         return;
     }
 
-    std::string fullMsg = ":" + client.getNickName() + " NOTICE " + target + " :" + message;
-    recipient->sendMessage(fullMsg);
+    std::string fullMsg = ":" + client.getNickname() + " NOTICE " + target + " :" + message;
+    recipient->sendMsg(fullMsg);
 }

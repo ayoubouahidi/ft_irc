@@ -1,10 +1,11 @@
 #include "CommandHandler.hpp"
 
+
 void inviteCommand(Client &client, std::vector<std::string> &params, Server &server)
 {
     if (params.size() < 2)
     {
-        client.sendMessage("461 :Not enough parameters");
+        client.sendMsg("461 :Not enough parameters");
         return;
     }
 
@@ -14,33 +15,36 @@ void inviteCommand(Client &client, std::vector<std::string> &params, Server &ser
     Client *targetUser = server.getClientByNickname(targetName);
     if (!targetUser)
     {
-        client.sendMessage("401 " + targetName + " :No such nick/channel");
+        client.sendMsg("401 " + targetName + " :No such nick/channel");
         return;
     }
 
     Channel *channel = server.getChannelByName(channelName);
     if (!channel)
     {
-        client.sendMessage("403 " + channelName + " :No such channel");
+        client.sendMsg("403 " + channelName + " :No such channel");
         return;
     }
 
-    if (!channel->hasClient(&client)) {
-        client.sendMessage("442 " + channelName + " :You're not on that channel");
+    if (!channel->isMember(client.getFd()))
+    {
+        client.sendMsg("442 " + channelName + " :You're not on that channel");
         return;
     }
 
-    if (channel->hasClient(targetUser)) {
-        client.sendMessage("443 " + targetName + " " + channelName + " :is already on channel");
+    if (channel->isMember(targetUser->getFd()))
+    {
+        client.sendMsg("443 " + targetName + " " + channelName + " :is already on channel");
         return;
     }
 
-    if (channel->getIsInviteOnly() && !channel->isOperator(&client)) {
-        client.sendMessage("482 " + channelName + " :You're not channel operator");
+    if (channel->isInviteOnly() && !channel->isOperator(client.getFd()))
+    {
+        client.sendMsg("482 " + channelName + " :You're not channel operator");
         return;
     }
 
-    channel->inviteUser(targetName);
-    targetUser->sendMessage(":" + client.getNickName() + " INVITE " + targetName + " :" + channelName);
-    client.sendMessage(":ft_irc 341 " + client.getNickName() + " " + targetName + " " + channelName);
+    channel->addInvite(targetUser->getFd());
+    targetUser->sendMsg(":" + client.getNickname() + " INVITE " + targetName + " :" + channelName);
+    client.sendMsg(":ft_irc 341 " + client.getNickname() + " " + targetName + " " + channelName);
 }

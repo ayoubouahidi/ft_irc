@@ -4,7 +4,7 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
 {
     if (params.empty())
     {
-        client.sendMessage("431 :No nickname given");
+        client.sendMsg("431 :No nickname given");
         return;
     }
     std::string wantedname = params[0];
@@ -12,19 +12,19 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
     {
         if (wantedname[i] == ' ' || wantedname[i] == '#' || wantedname[i] == '*' || wantedname[i] == ':')
         {
-            client.sendMessage("432 :Erroneous nickname");
+            client.sendMsg("432 :Erroneous nickname");
             return;
         }
     }
     Client *check_name_is_tacked = server.getClientByNickname(wantedname);
-    if (check_name_is_tacked && client.getNickName() != wantedname)
+    if (check_name_is_tacked && client.getNickname() != wantedname)
     {
-        client.sendMessage("433 :Nickname is already in use");
+        client.sendMsg("433 :Nickname is already in use");
     }
     else
     {
-        std::string oldNick = client.getNickName();
-        client.setNickName(wantedname);
+        std::string oldNick = client.getNickname();
+        client.setNickname(wantedname);
         if (!oldNick.empty() && oldNick != wantedname) {
             server.broadcast(":" + oldNick + " NICK " + wantedname, "");
         }
