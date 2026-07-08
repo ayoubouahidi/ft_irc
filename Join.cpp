@@ -111,9 +111,9 @@ void joinCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     for (size_t i = 0; i < channels.size(); i++)
     {
-        std::string key = "";
         if (i < keys.size())
-            key = keys[i];
-        joinSingleChannel(client, channels[i], key, server);
+            joinSingleChannel(client, channels[i], keys[i], server);
+        else
+            joinSingleChannel(client, channels[i], "", server);
     }
 }
