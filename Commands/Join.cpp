@@ -36,7 +36,7 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
 
     if (chan)
     {
-        if (chan->isMember(&client))
+        if (chan->isMember(client.getFd()))
             return;
 
         if (chan->isInviteOnly())
