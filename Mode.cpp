@@ -1,5 +1,6 @@
 #include "CommandHandler.hpp"
 
+
 void modeCommand(Client &client, std::vector<std::string> &params, Server &server)
 {
     if (params.empty())
@@ -7,127 +8,128 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
         client.sendMsg("461 :Not enough parameters");
         return;
     }
+
     std::string nameChannel = params[0];
-    if (nameChannel[0] == '#')
-    {
-    }
-    else
+
+    if (nameChannel.empty() || nameChannel[0] != '#')
     {
         client.sendMsg("502 :Cant change mode for other users");
         return;
     }
+
     Channel *channel = server.getChannelByName(nameChannel);
-    if (channel)
+    if (!channel)
     {
-        if (params.size() == 1)
+        client.sendMsg("403 " + nameChannel + " :No such channel");
+        return;
+    }
+
+    if (params.size() == 1)
+    {
+        std::string activeModes = "+";
+        if (channel->isInviteOnly())
+            activeModes += "i";
+        if (channel->isTopicRestricted())
+            activeModes += "t";
+        if (!channel->getPassword().empty())
+            activeModes += "k";
+        if (channel->getUserLimit() > 0)
+            activeModes += "l";
+
+        client.sendMsg("324 " + client.getNickname() + " " + nameChannel + " " + activeModes);
+        return;
+    }
+
+    if (!channel->isOperator(&client))
+    {
+        client.sendMsg("482 " + nameChannel + " :You're not channel operator");
+        return;
+    }
+
+    bool isAdding = true;
+    std::string mode = params[1];
+    size_t argIndex = 2;
+
+    for (size_t i = 0; i < mode.size(); i++)
+    {
+        char c = mode[i];
+
+        if (c == '+')
         {
-            std::string activeModes = "+";
-            if (channel->isInviteOnly())
-            {
-                activeModes += "i";
-            }
-            if (channel->isTopicRestricted())
-            {
-                activeModes += "t";
-            }
-            if (!channel->getPassword().empty())
-            {
-                activeModes += "k";
-            }
-            if (channel->getUserLimit() > 0)
-            {
-                activeModes += "l";
-            }
-            client.sendMsg("324 " + client.getNickname() + " " + params[0] + " " + activeModes);
-            return;
+            isAdding = true;
         }
-        else
+        else if (c == '-')
         {
-            if (channel->isOperator(&client))
+            isAdding = false;
+        }
+        else if (c == 'i')
+        {
+            channel->setInviteOnly(isAdding);
+        }
+        else if (c == 't')
+        {
+            channel->setTopicRestricted(isAdding);
+        }
+        else if (c == 'k')
+        {
+            if (isAdding)
             {
-                bool isAdding = true;
-                std::string mode = params[1];
-                size_t argIndex = 2;
-                for (size_t i = 0; i < mode.size(); i++)
+                if (argIndex < params.size())
                 {
-                    if (mode[i] == '+')
-                    {
-                        isAdding = true;
-                    }
-                    else if (mode[i] == '-')
-                    {
-                        isAdding = false;
-                    }
-                    else if (mode[i] == 'i')
-                    {
-                        channel->setInviteOnly(isAdding);
-                    }
-                    else if (mode[i] == 't')
-                    {
-                        channel->setTopicRestricted(isAdding);
-                    }
-                    else if (mode[i] == 'k')
-                    {
-                        if (isAdding) {
-                            if (argIndex < params.size()) {
-                                channel->setPassword(params[argIndex]);
-                                argIndex++;
-                            }
-                        } else {
-                            channel->setPassword("");
-                        }
-                    }else if(mode[i] == 'l'){
-                        int limit = 0;
-                        if (isAdding) {
-                            if (argIndex < params.size()) {
-                                std::stringstream ss(params[argIndex]);
-                                ss >> limit;
-                                channel->setUserLimit(limit);
-                                argIndex++;
-                            }
-                        } else {
-                            channel->setUserLimit(0);
-                        }
-                    }
-                    else if (mode[i] == 'o')
-                    {
-                        if (argIndex < params.size()) {
-                            Client* target = server.getClientByNickname(params[argIndex]);
-                            if (target) {
-                                if (isAdding) {
-                                    channel->addOperator(target);
-                                } else {
-                                    channel->removeOperator(target);
-                                }
-                            }
-                            argIndex++;
-                        }
-                    }
-                    else
-                    {
-                        std::string unknownchar(1, mode[i]);
-                        client.sendMsg("472 " + unknownchar + " :is unknown mode char to me");
-                    }
+                    channel->setPassword(params[argIndex]);
+                    argIndex++;
                 }
-                std::string message = ":" + client.getNickname() + " MODE " + params[0] + " " + params[1];
-                // Zid l-parametres f l-message dyal l-broadcast (bhal s-miya awla password)
-                for (size_t i = 2; i < argIndex; i++) {
-                    if (i < params.size()) {
-                        message += " " + params[i];
-                    }
-                }
-                channel->broadcast(message);
             }
             else
             {
-                client.sendMsg("482 " + params[0] + " :You're not channel operator");
-                return;
+                channel->setPassword("");
             }
         }
+        else if (c == 'l')
+        {
+            if (isAdding)
+            {
+                if (argIndex < params.size())
+                {
+                    int limit = 0;
+                    std::stringstream ss(params[argIndex]);
+                    ss >> limit;
+                    if (limit > 0)
+                        channel->setUserLimit(limit);
+                    argIndex++;
+                }
+            }
+            else
+            {
+                channel->setUserLimit(0);
+            }
+        }
+        else if (c == 'o')
+        {
+            if (argIndex < params.size())
+            {
+                Client *target = server.getClientByNickname(params[argIndex]);
+                if (target && channel->isMember(target))
+                {
+                    if (isAdding)
+                        channel->addOperator(target);
+                    else
+                        channel->removeOperator(target);
+                }
+                argIndex++;
+            }
+        }
+        else
+        {
+            std::string unknownchar(1, c);
+            client.sendMsg("472 " + unknownchar + " :is unknown mode char to me");
+        }
     }
-    else
+
+    std::string message = ":" + client.getNickname() + " MODE " + nameChannel + " " + mode;
+    for (size_t i = 2; i < argIndex && i < params.size(); i++)
     {
-        client.sendMsg("403 " + params[0] + " :No such channel");
-        return;
+        message += " " + params[i];
     }
+    channel->broadcast(message);
 }

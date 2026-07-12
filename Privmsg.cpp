@@ -28,12 +28,12 @@ void privmsgCommand(Client& client, std::vector<std::string>& params, Server& se
         return;
     }
 
-    Client* recipient = server.getClientByNickname(target);
-    if (recipient == NULL) {
+    Client* resclient = server.getClientByNickname(target);
+    if (resclient == NULL) {          // ← msso7
         client.sendMsg("401 " + target + " :No such nick/channel");
         return;
     }
 
     std::string fullMsg = ":" + client.getNickname() + " PRIVMSG " + target + " :" + message;
-    recipient->sendMsg(fullMsg);
+    resclient->sendMsg(fullMsg);
 }
