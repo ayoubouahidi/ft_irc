@@ -1,0 +1,39 @@
+#include "CommandHandler.hpp"
+
+void privmsgCommand(Client& client, std::vector<std::string>& params, Server& server) {
+    if (params.empty()) {
+        client.sendMsg("411 :No recipient given (PRIVMSG)");
+        return;
+    }
+    if (params.size() < 2) {
+        client.sendMsg("412 :No text to send");
+        return;
+    }
+
+    std::string target = params[0];
+    std::string message = params[1];
+
+    if (target[0] == '#') {
+        Channel* channel = server.getChannelByName(target);
+        if (channel == NULL) {
+            client.sendMsg("401 " + target + " :No such nick/channel");
+            return;
+        }
+        if (!channel->hasClient(&client)) {
+            client.sendMsg("404 " + target + " :Cannot send to channel");
+            return;
+        }
+        std::string fullMsg = ":" + client.getNickname() + " PRIVMSG " + target + " :" + message;
+        channel->broadcast(fullMsg, &client);
+        return;
+    }
+
+    Client* resclient = server.getClientByNickname(target);
+    if (resclient == NULL) {          // ← msso7
+        client.sendMsg("401 " + target + " :No such nick/channel");
+        return;
+    }
+
+    std::string fullMsg = ":" + client.getNickname() + " PRIVMSG " + target + " :" + message;
+    resclient->sendMsg(fullMsg);
+}
