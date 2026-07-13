@@ -12,6 +12,7 @@ void passCommand(Client& client, std::vector<std::string>& params, Server& serve
 
     if(params[0] == server.getPaswd()){
         client.setIsPassVerified(true);
+        registerClient(client);
     }else{
         client.sendMsg("464 :Password incorrect");
     }

@@ -12,7 +12,7 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     for (size_t i = 0; i < nickname.size(); i++)
     {
-        if (nickname[i] == ' ' || nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
+        if (nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
         {
             client.sendMsg("432 :Erroneous nickname");
             return;
@@ -21,12 +21,14 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     Client *tmp = server.getClientByNickname(nickname);
 
-    if (tmp && tmp != &client)
+    if (tmp)
     {
-        client.sendMsg("433 :Nickname is already in use");
-        return;
+        if (tmp != &client)
+        {
+            client.sendMsg("433 :Nickname is already in use");
+            return;
+        }
     }
-
     std::string oldNick = client.getNickname();
 
     client.setNickname(nickname);
