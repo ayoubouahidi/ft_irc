@@ -76,3 +76,63 @@ channel. The server validates the channel, checks whether the sender is a
 member, returns the appropriate IRC error replies when necessary, or
 broadcasts the message to all channel members except the sender.
 </p>
+
+<h2>TOPIC Command (Read Topic)</h2>
+
+<p>
+The <code>TOPIC</code> command allows a client to retrieve the current topic of
+an IRC channel. The server first verifies that the requested channel exists and
+that the client is a member of that channel. If these checks succeed, the server
+returns either the current topic or indicates that no topic has been set.
+</p>
+
+<h3>Reading a Channel Topic</h3>
+
+<p align="center">
+    <img src="images/topic-read-flow.png"
+         alt="TOPIC Read Command Flow"
+         width="1000">
+</p>
+
+<p align="center">
+<b>Figure.</b>
+Execution flow of the <code>TOPIC #channel</code> command. The server searches
+for the requested channel, verifies that the client belongs to it, and then
+returns one of the following replies:
+<code>403 ERR_NOSUCHCHANNEL</code> if the channel does not exist,
+<code>442 ERR_NOTONCHANNEL</code> if the client is not a member,
+<code>331 RPL_NOTOPIC</code> if no topic has been set, or
+<code>332 RPL_TOPIC</code> containing the current channel topic.
+</p>
+
+
+<h2>TOPIC Command (Update Topic)</h2>
+
+<p>
+The <code>TOPIC</code> command can also be used to modify the topic of an IRC
+channel by providing a new topic. Before updating the topic, the server verifies
+that the channel exists, the client is a member of the channel, and—if topic
+protection (<code>+t</code>) is enabled—that the client has operator
+privileges. After a successful update, the server broadcasts the new topic to
+all channel members.
+</p>
+
+<h3>Updating a Channel Topic</h3>
+
+<p align="center">
+    <img src="images/topic-update-flow.png"
+         alt="TOPIC Update Command Flow"
+         width="1000">
+</p>
+
+<p align="center">
+<b>Figure.</b>
+Execution flow of the
+<code>TOPIC #channel :&lt;new topic&gt;</code> command. The server first checks
+whether the channel exists and whether the client belongs to it. If topic
+protection (<code>+t</code>) is enabled, only channel operators are allowed to
+change the topic; otherwise, any channel member may update it. After the topic
+is successfully changed, the server broadcasts the
+<code>TOPIC</code> message to every member of the channel so that all clients
+immediately receive the updated topic.
+</p>
