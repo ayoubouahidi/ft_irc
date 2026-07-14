@@ -154,7 +154,7 @@ confirmation reply.
 <h3>Inviting a User to a Channel</h3>
 
 <p align="center">
-    <img src="images/invite-command.png.png"
+    <img src="images/invite-command.png"
          alt="INVITE Command Flow"
          width="1000">
 </p>
