@@ -48,3 +48,31 @@ The server parses the command, searches for the target nickname,
 returns <code>401 ERR_NOSUCHNICK</code> if the user does not exist,
 or forwards the message to the destination client if the user is found.
 </p>
+
+<h2>PRIVMSG Command (Channel Message)</h2>
+
+<p>
+The <code>PRIVMSG</code> command can also be used to send a message to an IRC
+channel. The server first checks whether the target channel exists. If the
+channel does not exist, the sender receives
+<code>401 ERR_NOSUCHNICK</code>. If the channel exists but the client is not a
+member, the server returns <code>404 ERR_CANNOTSENDTOCHAN</code>. Otherwise,
+the server broadcasts the message to every member of the channel except the
+sender.
+</p>
+
+<h3>PRIVMSG to a Channel</h3>
+
+<p align="center">
+    <img src="images/privmsg-channel.png"
+         alt="PRIVMSG to Channel Flow"
+         width="1000">
+</p>
+
+<p align="center">
+<b>Figure.</b>
+Flow of the <code>PRIVMSG</code> command when sending a message to an IRC
+channel. The server validates the channel, checks whether the sender is a
+member, returns the appropriate IRC error replies when necessary, or
+broadcasts the message to all channel members except the sender.
+</p>
