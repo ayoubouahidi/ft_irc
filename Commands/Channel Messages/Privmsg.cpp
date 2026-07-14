@@ -15,7 +15,7 @@ void privmsgCommand(Client& client, std::vector<std::string>& params, Server& se
 
     if (target[0] == '#') {
         Channel* channel = server.getChannelByName(target);
-        if (channel == NULL) {
+        if (!channel) {
             client.sendMsg("401 " + target + " :No such nick/channel");
             return;
         }
@@ -29,7 +29,7 @@ void privmsgCommand(Client& client, std::vector<std::string>& params, Server& se
     }
 
     Client* resclient = server.getClientByNickname(target);
-    if (resclient == NULL) {          // ← msso7
+    if (!resclient) {
         client.sendMsg("401 " + target + " :No such nick/channel");
         return;
     }
