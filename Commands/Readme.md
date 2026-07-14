@@ -136,3 +136,39 @@ is successfully changed, the server broadcasts the
 <code>TOPIC</code> message to every member of the channel so that all clients
 immediately receive the updated topic.
 </p>
+
+
+<h2>INVITE Command</h2>
+
+<p>
+The <code>INVITE</code> command allows a client to invite another user to join
+a specific IRC channel. Before sending the invitation, the server validates
+that the target user exists, the channel exists, the sender is a member of the
+channel, the target user is not already inside the channel, and—if the channel
+is invite-only (<code>+i</code>)—that the sender has operator privileges.
+After all validations succeed, the target user is added to the channel's invite
+list, the invitation is delivered to the target, and the sender receives a
+confirmation reply.
+</p>
+
+<h3>Inviting a User to a Channel</h3>
+
+<p align="center">
+    <img src="images/invite-command.png.png"
+         alt="INVITE Command Flow"
+         width="1000">
+</p>
+
+<p align="center">
+<b>Figure.</b>
+Execution flow of the
+<code>INVITE &lt;nickname&gt; &lt;channel&gt;</code> command. The server first
+checks that all required parameters are present, then verifies that the target
+user and channel exist. It ensures the sender is a member of the channel, the
+target user is not already inside it, and—if invite-only mode
+(<code>+i</code>) is enabled—that the sender is a channel operator. When all
+checks succeed, the target user is added to the channel's invite list, the
+server sends the invitation message to the target user, and finally replies
+with <code>341 (RPL_INVITING)</code> to confirm that the invitation was
+successfully sent.
+</p>
