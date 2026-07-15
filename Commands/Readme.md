@@ -202,3 +202,43 @@ successfully sent.
          alt="KICK Command Flow"
          width="100%">
 </p>
+
+
+<h1>MODE Command</h1>
+
+<p>Manages channel modes and permissions.</p>
+
+<h2>Syntax</h2>
+
+<pre><code>MODE &lt;channel&gt; [&lt;mode&gt;] [parameter]
+</code></pre>
+
+<h2>Supported Modes</h2>
+
+<ul>
+    <li><strong>+i / -i</strong> — Enable or disable Invite-Only mode.</li>
+    <li><strong>+t / -t</strong> — Restrict or allow topic changes.</li>
+    <li><strong>+k / -k</strong> — Set or remove the channel password.</li>
+    <li><strong>+l / -l</strong> — Set or remove the user limit.</li>
+    <li><strong>+o / -o</strong> — Grant or remove operator privileges.</li>
+</ul>
+
+<h2>Flow Summary</h2>
+
+<ul>
+    <li>Validate command parameters.</li>
+    <li>Verify that the channel exists.</li>
+    <li>Verify that the sender belongs to the channel.</li>
+    <li>Verify that the sender is a channel operator.</li>
+    <li>Read the requested mode.</li>
+    <li>Apply the corresponding channel modification.</li>
+    <li>Broadcast the MODE update to channel members.</li>
+</ul>
+
+<h2>Flow Diagram</h2>
+
+<p align="center">
+    <img src="./images/mode-command-flow.png"
+         alt="MODE Command Flow"
+         width="100%">
+</p>
