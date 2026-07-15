@@ -1,244 +1,204 @@
 <h2>JOIN Command</h2>
 
-<h3>1. Creating a New Channel</h3>
+<p>
+The <code>JOIN</code> command allows a client to create a new channel or join an
+existing one after all channel restrictions have been validated.
+</p>
+
+<h3>Creating a New Channel</h3>
 
 <p align="center">
-  <img src="images/join-new-channel.png" alt="Join New Channel" width="900">
+    <img src="images/join-new-channel.png"
+         alt="JOIN New Channel Flow"
+         width="100%">
 </p>
 
 <p align="center">
-  <b>Figure 1.</b> Client joins a channel that does not exist. The server creates the channel, assigns the first client as the channel operator, and adds the channel to the server.
+<b>Figure 1.</b>
+Execution flow when joining a channel that does not exist. The server creates
+the channel, registers the client as its first member, assigns operator
+privileges, and stores the new channel.
 </p>
 
-<br>
-
-<h3>2. Joining an Existing Channel</h3>
+<h3>Joining an Existing Channel</h3>
 
 <p align="center">
-  <img src="images/join-existing-channel.png" alt="Join Existing Channel" width="900">
+    <img src="images/join-existing-channel.png"
+         alt="JOIN Existing Channel Flow"
+         width="100%">
 </p>
 
 <p align="center">
-  <b>Figure 2.</b> Client joins an existing channel after the server validates membership requirements (invite-only, password, user limit, etc.).
+<b>Figure 2.</b>
+Execution flow when joining an existing channel. The server validates channel
+restrictions such as invite-only mode, password protection, and user limit
+before adding the client.
 </p>
+
+<hr>
 
 <h2>PRIVMSG Command (Private Message)</h2>
 
 <p>
-The <code>PRIVMSG</code> command allows a client to send a private message
-directly to another connected user.
-The server first searches for the target nickname.
-If the nickname exists, the message is forwarded to the recipient.
-Otherwise, the sender receives the IRC numeric reply
-<code>401 ERR_NOSUCHNICK</code>.
+The <code>PRIVMSG</code> command sends a private message directly to another
+connected client.
 </p>
 
-<h3>PRIVMSG to a User</h3>
+<h3>Flow Diagram</h3>
 
 <p align="center">
     <img src="images/privmsg-private-message.png"
          alt="PRIVMSG to User Flow"
-         width="1000">
+         width="100%">
 </p>
 
 <p align="center">
 <b>Figure.</b>
-Flow of the <code>PRIVMSG</code> command when sending a private message to a user.
-The server parses the command, searches for the target nickname,
-returns <code>401 ERR_NOSUCHNICK</code> if the user does not exist,
-or forwards the message to the destination client if the user is found.
+The server validates the target nickname. If the user exists, the message is
+forwarded; otherwise, <code>401 ERR_NOSUCHNICK</code> is returned.
 </p>
+
+<hr>
 
 <h2>PRIVMSG Command (Channel Message)</h2>
 
 <p>
-The <code>PRIVMSG</code> command can also be used to send a message to an IRC
-channel. The server first checks whether the target channel exists. If the
-channel does not exist, the sender receives
-<code>401 ERR_NOSUCHNICK</code>. If the channel exists but the client is not a
-member, the server returns <code>404 ERR_CANNOTSENDTOCHAN</code>. Otherwise,
-the server broadcasts the message to every member of the channel except the
-sender.
+The <code>PRIVMSG</code> command broadcasts a message to all members of a
+channel except the sender.
 </p>
 
-<h3>PRIVMSG to a Channel</h3>
+<h3>Flow Diagram</h3>
 
 <p align="center">
     <img src="images/privmsg-channel.png"
          alt="PRIVMSG to Channel Flow"
-         width="1000">
+         width="100%">
 </p>
 
 <p align="center">
 <b>Figure.</b>
-Flow of the <code>PRIVMSG</code> command when sending a message to an IRC
-channel. The server validates the channel, checks whether the sender is a
-member, returns the appropriate IRC error replies when necessary, or
-broadcasts the message to all channel members except the sender.
+The server verifies the channel, checks that the sender belongs to it, and then
+broadcasts the message to every other channel member.
 </p>
+
+<hr>
 
 <h2>TOPIC Command (Read Topic)</h2>
 
 <p>
-The <code>TOPIC</code> command allows a client to retrieve the current topic of
-an IRC channel. The server first verifies that the requested channel exists and
-that the client is a member of that channel. If these checks succeed, the server
-returns either the current topic or indicates that no topic has been set.
+The <code>TOPIC</code> command retrieves the current topic of a channel.
 </p>
 
-<h3>Reading a Channel Topic</h3>
+<h3>Flow Diagram</h3>
 
 <p align="center">
     <img src="images/topic-read-flow.png"
-         alt="TOPIC Read Command Flow"
-         width="1000">
+         alt="TOPIC Read Flow"
+         width="100%">
 </p>
 
 <p align="center">
 <b>Figure.</b>
-Execution flow of the <code>TOPIC #channel</code> command. The server searches
-for the requested channel, verifies that the client belongs to it, and then
-returns one of the following replies:
-<code>403 ERR_NOSUCHCHANNEL</code> if the channel does not exist,
-<code>442 ERR_NOTONCHANNEL</code> if the client is not a member,
-<code>331 RPL_NOTOPIC</code> if no topic has been set, or
-<code>332 RPL_TOPIC</code> containing the current channel topic.
+The server validates the channel and membership before returning either the
+current topic or indicating that no topic has been set.
 </p>
 
+<hr>
 
 <h2>TOPIC Command (Update Topic)</h2>
 
 <p>
-The <code>TOPIC</code> command can also be used to modify the topic of an IRC
-channel by providing a new topic. Before updating the topic, the server verifies
-that the channel exists, the client is a member of the channel, and—if topic
-protection (<code>+t</code>) is enabled—that the client has operator
-privileges. After a successful update, the server broadcasts the new topic to
-all channel members.
+The <code>TOPIC</code> command updates the channel topic when the client has the
+required permissions.
 </p>
 
-<h3>Updating a Channel Topic</h3>
+<h3>Flow Diagram</h3>
 
 <p align="center">
     <img src="images/topic-update-flow.png"
-         alt="TOPIC Update Command Flow"
-         width="1000">
+         alt="TOPIC Update Flow"
+         width="100%">
 </p>
 
 <p align="center">
 <b>Figure.</b>
-Execution flow of the
-<code>TOPIC #channel :&lt;new topic&gt;</code> command. The server first checks
-whether the channel exists and whether the client belongs to it. If topic
-protection (<code>+t</code>) is enabled, only channel operators are allowed to
-change the topic; otherwise, any channel member may update it. After the topic
-is successfully changed, the server broadcasts the
-<code>TOPIC</code> message to every member of the channel so that all clients
-immediately receive the updated topic.
+The server validates permissions, updates the topic, and broadcasts the new
+topic to all channel members.
 </p>
 
+<hr>
 
 <h2>INVITE Command</h2>
 
 <p>
-The <code>INVITE</code> command allows a client to invite another user to join
-a specific IRC channel. Before sending the invitation, the server validates
-that the target user exists, the channel exists, the sender is a member of the
-channel, the target user is not already inside the channel, and—if the channel
-is invite-only (<code>+i</code>)—that the sender has operator privileges.
-After all validations succeed, the target user is added to the channel's invite
-list, the invitation is delivered to the target, and the sender receives a
-confirmation reply.
+The <code>INVITE</code> command allows a client to invite another user into a
+channel.
 </p>
 
-<h3>Inviting a User to a Channel</h3>
+<h3>Flow Diagram</h3>
 
 <p align="center">
     <img src="images/invite-command.png"
          alt="INVITE Command Flow"
-         width="1000">
+         width="100%">
 </p>
 
 <p align="center">
 <b>Figure.</b>
-Execution flow of the
-<code>INVITE &lt;nickname&gt; &lt;channel&gt;</code> command. The server first
-checks that all required parameters are present, then verifies that the target
-user and channel exist. It ensures the sender is a member of the channel, the
-target user is not already inside it, and—if invite-only mode
-(<code>+i</code>) is enabled—that the sender is a channel operator. When all
-checks succeed, the target user is added to the channel's invite list, the
-server sends the invitation message to the target user, and finally replies
-with <code>341 (RPL_INVITING)</code> to confirm that the invitation was
-successfully sent.
+The server validates the sender, target user, and channel before adding the
+user to the invitation list and sending the invitation.
 </p>
 
-<h1>KICK Command</h1>
+<hr>
 
-<p>Removes a user from a channel.</p>
+<h2>KICK Command</h2>
 
-<h2>Syntax</h2>
+<p>
+The <code>KICK</code> command removes a member from a channel.
+</p>
 
-<pre><code>KICK &lt;channel&gt; &lt;nickname&gt; [:reason]
-</code></pre>
-
-<h2>Flow Summary</h2>
-
-<ul>
-    <li>Validate command parameters.</li>
-    <li>Verify the channel exists.</li>
-    <li>Check that the sender is a channel member.</li>
-    <li>Check that the sender is a channel operator.</li>
-    <li>Verify the target user belongs to the channel.</li>
-    <li>Broadcast the KICK message.</li>
-    <li>Remove the user from the channel.</li>
-    <li>Delete the channel if it becomes empty.</li>
-</ul>
-
-<h2>Flow Diagram</h2>
+<h3>Flow Diagram</h3>
 
 <p align="center">
-    <img src="./images/kick-command-flow.png"
+    <img src="images/kick-command-flow.png"
          alt="KICK Command Flow"
          width="100%">
 </p>
 
+<p align="center">
+<b>Figure.</b>
+The server validates permissions, broadcasts the KICK message, removes the
+target from the channel, and deletes the channel if it becomes empty.
+</p>
 
-<h1>MODE Command</h1>
+<hr>
 
-<p>Manages channel modes and permissions.</p>
+<h2>MODE Command</h2>
 
-<h2>Syntax</h2>
+<p>
+The <code>MODE</code> command manages channel modes and operator permissions.
+</p>
 
-<pre><code>MODE &lt;channel&gt; [&lt;mode&gt;] [parameter]
-</code></pre>
-
-<h2>Supported Modes</h2>
-
-<ul>
-    <li><strong>+i / -i</strong> — Enable or disable Invite-Only mode.</li>
-    <li><strong>+t / -t</strong> — Restrict or allow topic changes.</li>
-    <li><strong>+k / -k</strong> — Set or remove the channel password.</li>
-    <li><strong>+l / -l</strong> — Set or remove the user limit.</li>
-    <li><strong>+o / -o</strong> — Grant or remove operator privileges.</li>
-</ul>
-
-<h2>Flow Summary</h2>
+<h3>Supported Modes</h3>
 
 <ul>
-    <li>Validate command parameters.</li>
-    <li>Verify that the channel exists.</li>
-    <li>Verify that the sender belongs to the channel.</li>
-    <li>Verify that the sender is a channel operator.</li>
-    <li>Read the requested mode.</li>
-    <li>Apply the corresponding channel modification.</li>
-    <li>Broadcast the MODE update to channel members.</li>
+    <li><strong>+i / -i</strong> — Invite-only mode.</li>
+    <li><strong>+t / -t</strong> — Topic protection.</li>
+    <li><strong>+k / -k</strong> — Channel password.</li>
+    <li><strong>+l / -l</strong> — User limit.</li>
+    <li><strong>+o / -o</strong> — Operator privileges.</li>
 </ul>
 
-<h2>Flow Diagram</h2>
+<h3>Flow Diagram</h3>
 
 <p align="center">
-    <img src="./images/mode-command-flow.png"
+    <img src="images/mode-command-flow.png"
          alt="MODE Command Flow"
          width="100%">
+</p>
+
+<p align="center">
+<b>Figure.</b>
+The server validates permissions, applies the requested channel mode, and
+broadcasts the MODE update to every channel member.
 </p>
