@@ -172,3 +172,33 @@ server sends the invitation message to the target user, and finally replies
 with <code>341 (RPL_INVITING)</code> to confirm that the invitation was
 successfully sent.
 </p>
+
+<h1>KICK Command</h1>
+
+<p>Removes a user from a channel.</p>
+
+<h2>Syntax</h2>
+
+<pre><code>KICK &lt;channel&gt; &lt;nickname&gt; [:reason]
+</code></pre>
+
+<h2>Flow Summary</h2>
+
+<ul>
+    <li>Validate command parameters.</li>
+    <li>Verify the channel exists.</li>
+    <li>Check that the sender is a channel member.</li>
+    <li>Check that the sender is a channel operator.</li>
+    <li>Verify the target user belongs to the channel.</li>
+    <li>Broadcast the KICK message.</li>
+    <li>Remove the user from the channel.</li>
+    <li>Delete the channel if it becomes empty.</li>
+</ul>
+
+<h2>Flow Diagram</h2>
+
+<p align="center">
+    <img src="./images/kick-command-flow.png"
+         alt="KICK Command Flow"
+         width="100%">
+</p>
