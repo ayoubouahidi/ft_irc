@@ -28,6 +28,7 @@ class Client {
         const std::vector<std::string>& getChannels() const;
         bool getIsOperator() const;
         bool getIsRegistered() const;
+        bool getIsPassVerified() const;
         const std::string& getReadBuffer() const;
         const std::string& getWriteBuffer() const;
         void setNickname(const std::string& nickname);
@@ -42,6 +43,8 @@ class Client {
         void removeChannel(const std::string& channel);
         void setIsOperator(bool isOperator);
         void setIsRegistered(bool isRegistered);
+        void setIsPassVerified(bool isPassVerified);
+        void setIsQuitting(bool isQuitting);
         void appendToReadBuffer(const std::string& data); // append to buff
         std::string getNextmessage(); // return the extracted message 
         void appendToWriteBuffer(const std::string& data); // 
@@ -61,6 +64,8 @@ class Client {
         std::vector<std::string> channels;
         bool isOperator;
         bool isRegistered;
+        bool isPassVerified;
+        bool isQuitting;
         std::string readBuffer;
         std::string writeBuffer;
         std::string hostname;

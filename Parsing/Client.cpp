@@ -4,11 +4,11 @@
 
 // constructors
 
-Client::Client(int fd) :  nickname(""), username(""), realname(""), hostname(""), fd(fd), isOperator(false), isRegistered(false) {
+Client::Client(int fd) :  nickname(""), username(""), realname(""), fd(fd), channels(), isOperator(false), isRegistered(false), isPassVerified(false), isQuitting(false), readBuffer(""), writeBuffer(""), hostname("") {
 }
-Client::Client() :  nickname(""), username(""), realname(""), hostname(""), fd(-1), isOperator(false), isRegistered(false) {
+Client::Client() :  nickname(""), username(""), realname(""), fd(-1), channels(), isOperator(false), isRegistered(false), isPassVerified(false), isQuitting(false), readBuffer(""), writeBuffer(""), hostname("") {
 }
-Client::Client(const Client& other) : nickname(other.nickname), username(other.username), realname(other.realname), hostname(other.hostname), fd(other.fd), channels(other.channels), isOperator(other.isOperator), isRegistered(other.isRegistered), readBuffer(other.readBuffer), writeBuffer(other.writeBuffer) {
+Client::Client(const Client& other) : nickname(other.nickname), username(other.username), realname(other.realname), fd(other.fd), channels(other.channels), isOperator(other.isOperator), isRegistered(other.isRegistered), isPassVerified(other.isPassVerified), isQuitting(other.isQuitting), readBuffer(other.readBuffer), writeBuffer(other.writeBuffer), hostname(other.hostname) {
 }
 Client& Client::operator=(const Client& other) {
     if (this != &other) {
@@ -20,6 +20,8 @@ Client& Client::operator=(const Client& other) {
         channels = other.channels;
         isOperator = other.isOperator;
         isRegistered = other.isRegistered;
+        isPassVerified = other.isPassVerified;
+        isQuitting = other.isQuitting;
         readBuffer = other.readBuffer;
         writeBuffer = other.writeBuffer;
     }
@@ -57,6 +59,9 @@ bool Client::getIsOperator() const {
 bool Client::getIsRegistered() const {
     return isRegistered;
 }
+bool Client::getIsPassVerified() const {
+    return isPassVerified;
+}
 const std::string& Client::getReadBuffer() const {
     return readBuffer;
 }
@@ -81,6 +86,31 @@ void Client::setHostname(const std::string& hostname) {
 void Client::setFd(int fd) {
     this->fd = fd;
 }       
+
+void Client::addChannel(const std::string& channel) {
+    if (std::find(channels.begin(), channels.end(), channel) == channels.end())
+        channels.push_back(channel);
+}
+
+void Client::removeChannel(const std::string& channel) {
+    channels.erase(std::remove(channels.begin(), channels.end(), channel), channels.end());
+}
+
+void Client::setIsOperator(bool isOperator) {
+    this->isOperator = isOperator;
+}
+
+void Client::setIsRegistered(bool isRegistered) {
+    this->isRegistered = isRegistered;
+}
+
+void Client::setIsPassVerified(bool isPassVerified) {
+    this->isPassVerified = isPassVerified;
+}
+
+void Client::setIsQuitting(bool isQuitting) {
+    this->isQuitting = isQuitting;
+}
 
 
 

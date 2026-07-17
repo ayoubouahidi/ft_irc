@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include <map>
 
 void    Server::createSocket()
 {
@@ -37,15 +38,10 @@ void    Server::setupEpoll()
 
 void    Server::acceptClient()
 {
-    int newsocket = accept(serverSocket, nullptr, nullptr);
+    int newsocket = accept(serverSocket, 0, 0);
     if (newsocket != -1)
     {
-        Client new_client;
-        new_client.fd = newsocket;
-        new_client.read_data = "";
-        new_client.written_data = "";
-        new_client.complete = false;
-        Clients[new_client.fd] = new_client;
+        Clients[newsocket] = Client(newsocket);
         event.events = EPOLLIN | EPOLLET; //epollet makes the kernel notify only when there's new data
         event.data.fd = newsocket;
         epoll_ctl(epollfd, EPOLL_CTL_ADD, newsocket, &event);
@@ -62,37 +58,80 @@ void    Server::acceptClient()
 void    Server::receiveFromClient(int fd)
 {
     char buffer[1024] = {0};
+    static std::map<int, std::string> pending_data;
+    Client& client = Clients[fd];
     int n = recv(fd, buffer, sizeof(buffer), 0);
-    int new_fd = fd;
-    Client& client = Clients[new_fd]; // just for readability! instead of Clients[new_client.fd].fd
+
     if (n > 0)
     {
-        client.read_data.append(buffer, n);
+        pending_data[fd].append(buffer, n);
         while (true)
         {
-            size_t pos = client.read_data.find("\r\n");
+            size_t pos = pending_data[fd].find("\r\n");
             if (pos == std::string::npos)
                 break ;
-            std::string line = client.read_data.substr(0, pos);
-            client.read_data.erase(0, pos + 2);
+            std::string line = pending_data[fd].substr(0, pos);
+            pending_data[fd].erase(0, pos + 2);
             //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
+            (void)client;
+            (void)line;
         }
     }
-    else if (n == 0) // disconnect client
+    else if (n == 0)
     {
-        close(new_fd);
-        epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
-        Clients.erase(new_fd);
+        pending_data.erase(fd);
+        close(fd);
+        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
+        Clients.erase(fd);
     }
     else
+    {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
-        {
-            close(new_fd);
-            epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
-            Clients.erase(new_fd);
-        }
+            return;
+        pending_data.erase(fd);
+        close(fd);
+        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
+        Clients.erase(fd);
+    }
     //here check the response! sendv
 }
+
+// void    Server::receiveFromClient(int fd)
+// {
+//     char buffer[1024] = {0};
+//     int n = recv(fd, buffer, sizeof(buffer), 0);
+//     int new_fd = fd;
+//     Client& client = Clients[new_fd]; // just for readability! instead of Clients[new_client.fd].fd
+//     (void)client;
+//     static std::map<int, std::string> pending_data;
+//     if (n > 0)
+//     {
+//         pending_data[new_fd].append(buffer, n);
+//         while (true)
+//         {
+//             size_t pos = pending_data[new_fd].find("\r\n");
+//             if (pos == std::string::npos)
+//                 break ;
+//             std::string line = pending_data[new_fd].substr(0, pos);
+//             pending_data[new_fd].erase(0, pos + 2);
+//             //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
+//         }
+//     }
+//     else if (n == 0) // disconnect client
+//     {
+//         close(new_fd);
+//         epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
+//         Clients.erase(new_fd);
+//     }
+//     else
+//         if (errno == EAGAIN || errno == EWOULDBLOCK)
+//         {
+//             close(new_fd);
+//             epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
+//             Clients.erase(new_fd);
+//         }
+//     //here check the response! sendv
+// }
 
 void    Server::server_init()
 {

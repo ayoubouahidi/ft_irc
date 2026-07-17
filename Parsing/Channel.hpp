@@ -14,7 +14,7 @@ class Channel {
     public:
         Channel(const std::string& name);
         const std::string& getName() const;
-        const std::map<int, Client*>& getClients() const;
+        std::vector<Client*> getClients() const;
         void addClient(Client* client);
         void removeClient(Client* client);
     
@@ -40,12 +40,18 @@ class Channel {
         // Member management
         void addMember(Client* client);
         void removeMember(int fd);
+        void removeMember(Client* client);
         bool isMember(int fd) const;
+        bool isMember(Client* client) const;
+        bool hasClient(Client* client) const;
+        bool hasClient(int fd) const;
 
         // Operator management
         void addOperator(Client* client);
         void removeOperator(int fd);
+        void removeOperator(Client* client);
         bool isOperator(int fd) const;
+        bool isOperator(Client* client) const;
 
         // Invite list
         void addInvite(int fd);
@@ -62,6 +68,7 @@ class Channel {
 
         // Broadcast message to all members
         void broadcast(const std::string& message, int excludeFd = -1);
+        void broadcast(const std::string& message, Client* excludeClient);
 
     private:
         std::string             _name;

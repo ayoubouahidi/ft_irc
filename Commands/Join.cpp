@@ -8,7 +8,7 @@ static std::string buildNamesList(Channel *chan)
 
     for (size_t i = 0; i < members.size(); i++)
     {
-        if (chan->isOperator(members[i]))
+        if (chan->isOperator(members[i]->getFd()))
             names += "@";
         names += members[i]->getNickname();
         if (i + 1 < members.size())
@@ -36,7 +36,7 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
 
     if (chan)
     {
-        if (chan->isMember(&client))
+        if (chan->hasClient(&client))
             return;
 
         if (chan->isInviteOnly())

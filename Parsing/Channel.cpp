@@ -1,40 +1,20 @@
 #include "Channel.hpp"
 #include "Client.hpp"
+#include <algorithm>
 
 
 Channel::Channel(const std::string& name) : _name(name), _topic(""), _inviteOnly(false), _topicRestricted(false), _hasPassword(false), _password(""), _hasUserLimit(false), _userLimit(0) {
-}
-
-Channel::~Channel() {
-    
-}
-
-Channel::Channel(const Channel& other) : _name(other._name), _topic(other._topic), _members(other._members), _operators(other._operators), _inviteList(other._inviteList), _inviteOnly(other._inviteOnly), _topicRestricted(other._topicRestricted), _hasPassword(other._hasPassword), _password(other._password), _hasUserLimit(other._hasUserLimit), _userLimit(other._userLimit) {
-}
-
-Channel& Channel::operator=(const Channel& other) {
-    if (this != &other) {
-        _name = other._name;
-        _topic = other._topic;
-        _members = other._members;
-        _operators = other._operators;
-        _inviteList = other._inviteList;
-        _inviteOnly = other._inviteOnly;
-        _topicRestricted = other._topicRestricted;
-        _hasPassword = other._hasPassword;
-        _password = other._password;
-        _hasUserLimit = other._hasUserLimit;
-        _userLimit = other._userLimit;
-    }
-    return *this;
 }
 
 const std::string& Channel::getName() const {
     return _name;
 }
 
-const std::map<int, Client*>& Channel::getClients() const {
-    return _members;
+std::vector<Client*> Channel::getClients() const {
+    std::vector<Client*> clients;
+    for (std::map<int, Client*>::const_iterator it = _members.begin(); it != _members.end(); ++it)
+        clients.push_back(it->second);
+    return clients;
 }
 
 
@@ -85,8 +65,25 @@ void Channel::removeMember(int fd) {
     _operators.erase(fd);
 }
 
+void Channel::removeMember(Client* client) {
+    if (client)
+        removeMember(client->getFd());
+}
+
 bool Channel::isMember(int fd) const {
     return _members.find(fd) != _members.end();
+}
+
+bool Channel::isMember(Client* client) const {
+    return client && isMember(client->getFd());
+}
+
+bool Channel::hasClient(Client* client) const {
+    return client && isMember(client->getFd());
+}
+
+bool Channel::hasClient(int fd) const {
+    return isMember(fd);
 }
 
 void Channel::addOperator(Client* client) {
@@ -97,8 +94,17 @@ void Channel::removeOperator(int fd) {
     _operators.erase(fd);
 }
 
+void Channel::removeOperator(Client* client) {
+    if (client)
+        removeOperator(client->getFd());
+}
+
 bool Channel::isOperator(int fd) const {
     return _operators.find(fd) != _operators.end();
+}
+
+bool Channel::isOperator(Client* client) const {
+    return client && isOperator(client->getFd());
 }
 
 void Channel::addInvite(int fd) {
@@ -162,4 +168,11 @@ void Channel::broadcast(const std::string& message, int excludeFd) {
             it->second->sendMsg(message);
         }
     }
+}
+
+void Channel::broadcast(const std::string& message, Client* excludeClient) {
+    if (excludeClient)
+        broadcast(message, excludeClient->getFd());
+    else
+        broadcast(message, -1);
 }
