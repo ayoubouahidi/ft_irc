@@ -8,7 +8,6 @@
 #include <sstream>
 #include <unistd.h>
 #include "Client.hpp"
-#include "server.hpp"
 #include "Channel.hpp"
 
 class Client;
@@ -23,19 +22,15 @@ struct Message
 
 typedef void (*CommandFunction)(Client &, std::vector<std::string> &, Server &);
 
-void myPingCommand(Client &client, std::vector<std::string> &params, Server &server);
 void passCommand(Client &client, std::vector<std::string> &params, Server &server);
 void nickCommand(Client &client, std::vector<std::string> &params, Server &server);
 void userCommand(Client &client, std::vector<std::string> &params, Server &server);
-void quitCommand(Client &client, std::vector<std::string> &params, Server &server);
 void privmsgCommand(Client &client, std::vector<std::string> &params, Server &server);
 void joinCommand(Client &client, std::vector<std::string> &params, Server &server);
-void partCommand(Client &client, std::vector<std::string> &params, Server &server);
 void kickCommand(Client &client, std::vector<std::string> &params, Server &server);
 void inviteCommand(Client &client, std::vector<std::string> &params, Server &server);
 void topicCommand(Client &client, std::vector<std::string> &params, Server &server);
 void modeCommand(Client &client, std::vector<std::string> &params, Server &server);
-void noticeCommand(Client &client, std::vector<std::string> &params, Server &server);
 void registerClient(Client &client);
 
 class CommandHandler

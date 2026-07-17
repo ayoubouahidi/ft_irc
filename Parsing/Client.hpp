@@ -10,13 +10,14 @@
 
 typedef std::vector<std::string> writebuffer_t;
 
+
+
 class Client {
     public:
         // ordical form 
         Client();
         Client(const Client& other);
         Client& operator=(const Client& other);
-
         Client(int fd);
         // getters and setters
         const std::string& getName() const;

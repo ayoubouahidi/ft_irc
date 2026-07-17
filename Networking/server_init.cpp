@@ -1,6 +1,49 @@
 #include "server.hpp"
 #include <map>
 
+Message parseMessage(const std::string& line)
+{
+    Message msg;
+    std::istringstream iss(line);
+    std::string token;
+    
+    // Check for prefix (starts with :)
+    if (!line.empty() && line[0] == ':')
+    {
+        iss >> token;
+        msg.prefix = token.substr(1); // Remove the leading ':'
+    }
+
+    if (iss >> token)
+    {
+        msg.command = token;
+        // Convert command to uppercase
+        for (char& c : msg.command)
+            c = std::toupper(c);
+    }
+    
+    size_t trailingPos = line.find(" :");
+    if (trailingPos != std::string::npos)
+    {
+        std::string beforeTrailing = line.substr(0, trailingPos);
+        std::istringstream paramIss(beforeTrailing);
+        if (!line.empty() && line[0] == ':')
+            paramIss >> token; // Skip prefix
+        paramIss >> token; // Skip command
+        while (paramIss >> token)
+            msg.paramters.push_back(token);
+        std::string trailing = line.substr(trailingPos + 2); // +2 to skip " :"
+        if (!trailing.empty())
+            msg.paramters.push_back(trailing);
+    }
+    else
+    {
+        while (iss >> token)
+            msg.paramters.push_back(token);
+    }
+    return msg;
+}
+
 void    Server::createSocket()
 {
     //creating a socket here!
@@ -72,11 +115,12 @@ void    Server::receiveFromClient(int fd)
                 break ;
             std::string line = pending_data[fd].substr(0, pos);
             pending_data[fd].erase(0, pos + 2);
-            //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
-            (void)client;
-            (void)line;
+            // //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
+            Message msg = parseMessage(line); //ayoub had function hna;
+            _commandHandler.executeCommand(msg, client, *this);
         }
     }
+    
     else if (n == 0)
     {
         pending_data.erase(fd);

@@ -18,6 +18,12 @@
 #define MAX_EVENTS 10
 #include "../Parsing/Client.hpp"
 #include "../Parsing/Channel.hpp"
+#include "../Commands/CommandHandler.hpp"
+
+struct Message;
+
+// Function to parse IRC protocol messages
+Message parseMessage(const std::string& line);
 
 // struct Client
 // {
@@ -38,6 +44,8 @@ class Server
         struct epoll_event events[MAX_EVENTS];
         std::map<int, Client> Clients;
         std::map<std::string, Channel*> Channels;
+        CommandHandler _commandHandler;
+
     public :
         Server();
         ~Server();
