@@ -115,7 +115,8 @@ void Client::setIsQuitting(bool isQuitting) {
 
 
 Client::~Client() {
-    close(fd);
+    std::cout << "Destructor closing fd = " << fd << std::endl;
+    // close(fd);
 }
 
 

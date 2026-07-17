@@ -13,17 +13,18 @@ void sig_handle(int sig)
 int main(int ac, char **av)
 {
     Server server;
+    // throw std::runtime_error("Invalid arguments number!");
 
-    if (ac != 3)
-        throw std::runtime_error("Invalid arguments number!");
+    if (ac != 3){
+        std::cout << "zbi la 3ti 3 paramters";
+        return 1;
+    }
     av++;
     int prt = std::stoi(av[0]);
     if (prt < 1024 || prt > 65535)
         throw std::runtime_error("invalid port");
     server.setPort(prt);
     server.setPaswd(av[1]);
-    std::cout << "port is : " << server.getPort() << std::endl;
-    std::cout << "password is : " << server.getPaswd() << std::endl;
     try
     {
         signal(SIGINT, sig_handle);
