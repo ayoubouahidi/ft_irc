@@ -114,10 +114,7 @@ void Client::setIsQuitting(bool isQuitting) {
 
 
 
-Client::~Client() {
-    std::cout << "Destructor closing fd = " << fd << std::endl;
-    // close(fd);
-}
+Client::~Client() {}
 
 
 void Client::appendToReadBuffer(const std::string& data)
@@ -130,7 +127,7 @@ std::string Client::getNextmessage()
     size_t pos = 0;
     std::string message;
 
-    pos = this->readBuffer.find("\r\n");
+    pos = this->readBuffer.find("\n");
     if (pos == std::string::npos)
         return "";
     message = readBuffer.substr(0 , pos);

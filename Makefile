@@ -61,7 +61,6 @@ $(OBJ_DIR)/%.o: %.cpp
 # Clean build files
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -f $(TARGET)
 	@echo "✓ Clean complete"
 
 # Deep clean (removes object files in root)

@@ -84,6 +84,7 @@ void Server::acceptClient()
     int newsocket = accept(serverSocket, 0, 0);
     if (newsocket != -1)
     {
+        std::cout << newsocket << "\n";
         Clients[newsocket] = Client(newsocket);
         event.events = EPOLLIN | EPOLLET; // epollet makes the kernel notify only when there's new data
         event.data.fd = newsocket;
@@ -110,7 +111,7 @@ void Server::receiveFromClient(int fd)
         pending_data[fd].append(buffer, n);
         while (true)
         {
-            size_t pos = pending_data[fd].find("\r\n");
+            size_t pos = pending_data[fd].find("\n");
             if (pos == std::string::npos)
                 break;
             std::string line = pending_data[fd].substr(0, pos);
@@ -139,43 +140,6 @@ void Server::receiveFromClient(int fd)
     }
     // here check the response! sendv
 }
-
-// void    Server::receiveFromClient(int fd)
-// {
-//     char buffer[1024] = {0};
-//     int n = recv(fd, buffer, sizeof(buffer), 0);
-//     int new_fd = fd;
-//     Client& client = Clients[new_fd]; // just for readability! instead of Clients[new_client.fd].fd
-//     (void)client;
-//     static std::map<int, std::string> pending_data;
-//     if (n > 0)
-//     {
-//         pending_data[new_fd].append(buffer, n);
-//         while (true)
-//         {
-//             size_t pos = pending_data[new_fd].find("\r\n");
-//             if (pos == std::string::npos)
-//                 break ;
-//             std::string line = pending_data[new_fd].substr(0, pos);
-//             pending_data[new_fd].erase(0, pos + 2);
-//             //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
-//         }
-//     }
-//     else if (n == 0) // disconnect client
-//     {
-//         close(new_fd);
-//         epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
-//         Clients.erase(new_fd);
-//     }
-//     else
-//         if (errno == EAGAIN || errno == EWOULDBLOCK)
-//         {
-//             close(new_fd);
-//             epoll_ctl(epollfd, EPOLL_CTL_DEL, new_fd, &event);
-//             Clients.erase(new_fd);
-//         }
-//     //here check the response! sendv
-// }
 
 void Server::server_init()
 {
