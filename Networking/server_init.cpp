@@ -60,7 +60,8 @@ void Server::createSocket()
 
     // it helps rebinding the same port if an issue occured (like ctrl+c)
     int opt = 1;
-    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    if(setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+        throw std::runtime_error("setsockopt error");
 
     // binding ip/port to the server
     if (bind(serverSocket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
@@ -84,7 +85,6 @@ void Server::acceptClient()
     int newsocket = accept(serverSocket, 0, 0);
     if (newsocket != -1)
     {
-        std::cout << newsocket << "\n";
         Clients[newsocket] = Client(newsocket);
         event.events = EPOLLIN | EPOLLET; // epollet makes the kernel notify only when there's new data
         event.data.fd = newsocket;
@@ -111,7 +111,7 @@ void Server::receiveFromClient(int fd)
         pending_data[fd].append(buffer, n);
         while (true)
         {
-            size_t pos = pending_data[fd].find("\n");
+            size_t pos = pending_data[fd].find("\r\n");
             if (pos == std::string::npos)
                 break;
             std::string line = pending_data[fd].substr(0, pos);

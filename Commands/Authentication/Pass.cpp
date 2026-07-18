@@ -10,11 +10,10 @@ void passCommand(Client& client, std::vector<std::string>& params, Server& serve
         client.sendMsg("462 :Unauthorized command (already registered)");
         return;
     }
-
     if(params[0] == server.getPaswd()){
         client.setIsPassVerified(true);
         registerClient(client);
     }else{
-        client.sendMsg("464 :Password incorrect");
+        client.sendMsg("464 :Password incorrect\n");
     }
 }
