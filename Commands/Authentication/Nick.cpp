@@ -1,6 +1,40 @@
 #include "CommandHandler.hpp"
 #include "../../Networking/server.hpp"
 
+
+
+
+
+#include <string>
+#include <cctype>
+
+bool isValidNickname(const std::string &nick)
+{
+    if (nick.empty() || nick.size() > 9)
+        return false;
+
+    static const std::string special = "[]\\`_^{}|-";
+
+    for (size_t i = 0; i < nick.size(); i++)
+    {
+        char c = nick[i];
+
+        if (i == 0)
+        {
+            if (!std::isalpha(c) && !(special.find(c) != std::string::npos && c != '-'))
+                return false;
+        }
+        else
+        {
+            if (!std::isalpha(c) && !std::isdigit(c) && special.find(c) == std::string::npos)
+                return false;
+        }
+    }
+
+    return true;
+}
+
+
 void nickCommand(Client &client, std::vector<std::string> &params, Server &server)
 {
     if (params.empty())
@@ -10,14 +44,10 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
     }
 
     std::string nickname = params[0];
-
-    for (size_t i = 0; i < nickname.size(); i++)
+    if (!isValidNickname(nickname))
     {
-        if (nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
-        {
-            client.sendMsg("432 :Erroneous nickname");
-            return;
-        }
+        client.sendMsg("432 :Erroneous nickname");
+        return;
     }
 
     Client *tmp = server.getClientByNickname(nickname);
@@ -30,11 +60,13 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
             return;
         }
     }
+
+    bool wasRegistered =client.getIsRegistered();
     std::string oldNick = client.getNickname();
 
     client.setNickname(nickname);
 
-    if (!oldNick.empty() && oldNick != nickname)
+    if (wasRegistered && oldNick != nickname)
         server.broadcast(":" + oldNick + " NICK :" + nickname, "");
 
     registerClient(client);
