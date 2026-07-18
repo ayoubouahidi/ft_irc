@@ -144,9 +144,12 @@ void Client::clearBuffer()
 
 void Client::sendMsg(const std::string& message) const
 {
-    if (send(fd, message.c_str(), message.length(), 0) == -1)
+    std::string msg = message + "\r\n";
+
+    if (send(fd, msg.c_str(), msg.length(), 0) == -1)
     {
-        std::cerr << "Error sending message to client: " << strerror(errno) << std::endl;
+        std::cerr << "Error sending message to client: "
+                  << strerror(errno) << std::endl;
     }
 }
 

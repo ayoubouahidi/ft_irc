@@ -14,6 +14,6 @@ void passCommand(Client& client, std::vector<std::string>& params, Server& serve
         client.setIsPassVerified(true);
         registerClient(client);
     }else{
-        client.sendMsg("464 :Password incorrect\n");
+        client.sendMsg("464 :Password incorrect");
     }
 }
