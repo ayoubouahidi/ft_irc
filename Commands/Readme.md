@@ -205,5 +205,5 @@ broadcasts the MODE update to every channel member.
 
 <footer>
     <hr>
-    <p>&copy; 2026 FT_IRC 1337 BY HAMZA ELJARY. All rights reserved.</p>
+    <p align="center">&copy; 2026 FT_IRC 1337 BY HAMZA ELJARY. All rights reserved.</p>
 </footer>
