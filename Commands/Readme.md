@@ -202,3 +202,8 @@ The <code>MODE</code> command manages channel modes and operator permissions.
 The server validates permissions, applies the requested channel mode, and
 broadcasts the MODE update to every channel member.
 </p>
+
+<footer>
+    <hr>
+    <p>&copy; 2026 FT_IRC 1337 BY HAMZA ELJARY. All rights reserved.</p>
+</footer>
