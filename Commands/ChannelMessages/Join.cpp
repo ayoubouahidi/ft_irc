@@ -42,21 +42,18 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
 
         if (chan->isInviteOnly())
         {
-            if (chan->isInvited(client.getFd()))
-                chan->removeInvite(client.getFd());
+            if (chan->isInvited(client.getFd())){}
             else
             {
                 client.sendMsg(":ft_irc 473 " + client.getNickname() + " " + channel + " :Cannot join channel (+i)");
                 return;
             }
         }
-
         if (!chan->getPassword().empty() && key != chan->getPassword())
         {
             client.sendMsg(":ft_irc 475 " + client.getNickname() + " " + channel + " :Cannot join channel (+k)");
             return;
         }
-
         if (chan->getUserLimit() > 0 && chan->getMemberCount() >= chan->getUserLimit())
         {
             client.sendMsg(":ft_irc 471 " + client.getNickname() + " " + channel + " :Cannot join channel (+l)");
