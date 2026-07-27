@@ -86,7 +86,7 @@ void Server::acceptClient()
     if (newsocket != -1)
     {
         Clients[newsocket] = Client(newsocket);
-        event.events = EPOLLIN | EPOLLET; // epollet makes the kernel notify only when there's new data
+        event.events = EPOLLIN;
         event.data.fd = newsocket;
         if (epoll_ctl(epollfd, EPOLL_CTL_ADD, newsocket, &event) == -1)
             throw std::runtime_error("epoll_ctl error");
