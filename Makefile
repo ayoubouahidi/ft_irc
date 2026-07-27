@@ -1,22 +1,43 @@
-NAME = irc
+NAME = ft_irc
 
-CXX = c++ -g
+CC = c++
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-CXXFLAGS = -Wall -Werror -Wextra
+SRCS = Commands/Authentication/Nick.cpp \
+		Commands/CommandHandler.cpp \
+		Commands/Authentication/Pass.cpp \
+		Commands/Authentication/Register.cpp \
+		Commands/Authentication/User.cpp \
+		Commands/ChannelMessages/Join.cpp \
+		Commands/ChannelMessages/Privmsg.cpp \
+		Commands/OperatorCommands/Invite.cpp \
+		Commands/OperatorCommands/Kick.cpp \
+		Commands/OperatorCommands/Mode.cpp \
+		Commands/OperatorCommands/Topic.cpp \
+		Networking/server_init.cpp \
+		Networking/server.cpp \
+		Parsing/Channel.cpp \
+		Parsing/Client.cpp \
+		main.cpp
 
-SRCs = main.cpp\
-		server.cpp\
-		server_init.cpp\
+OBJS = $(SRCS:%.cpp=%.o)
 
-OBJs = $(SRCs:.cpp=.o)
+all: $(NAME)
 
-$(NAME) : $(OBJs)
-	$(CXX) $(CXXFLAGS) $(OBJs) -o $(NAME)
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 
-clean : 
-	rm -rf $(OBJs)
+%.o: %.cpp
+	$(CC) $(CFLAGS)  -c $< -o $@
 
-fclean : clean
+clean:
+	rm -rf $(OBJS)
+
+fclean: clean
 	rm -rf $(NAME)
 
-re : $(fclean) $(NAME)
+re: fclean all
+
+.PHONY: all clean fclean re
+
+.SECONDARY: ${OBJS}

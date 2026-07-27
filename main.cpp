@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "Networking/server.hpp"
 
 bool running = true;
 
@@ -10,24 +10,31 @@ void sig_handle(int sig)
     }
 }
 
+static int server_set(int ac, char **av)
+{
+    if (ac != 3)
+        throw std::runtime_error("Short on args");
+    av++;
+    std::stringstream ss(av[0]);
+    int prt;
+    ss >> prt;
+    if (prt < 1024 || prt > 65535)
+        throw std::runtime_error("invalid port");
+    return prt;
+}
+
 int main(int ac, char **av)
 {
     Server server;
+    int prt = 0;
 
-    if (ac != 3)
-        throw std::runtime_error("Invalid arguments number!");
-    av++;
-    int prt = std::stoi(av[0]);
-    if (prt < 1024 || prt > 65535)
-        throw std::runtime_error("invalid port");
-    server.setPort(prt);
-    server.setPaswd(av[1]);
-    std::cout << "port is : " << server.getPort() << std::endl;
-    std::cout << "password is : " << server.getPaswd() << std::endl;
     try
     {
         signal(SIGINT, sig_handle);
         signal(SIGQUIT, SIG_IGN);
+        prt = server_set(ac, av);
+        server.setPort(prt);
+        server.setPaswd(av[2]);
         server.server_init();
     }
     catch(const std::exception& e)
