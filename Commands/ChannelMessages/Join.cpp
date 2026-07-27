@@ -21,15 +21,15 @@ static std::string buildNamesList(Channel *chan)
 static void sendNamesReply(Client &client, const std::string &channel, Channel *chan)
 {
     std::string names = buildNamesList(chan);
-    client.sendMsg(":ft_irc 353 " + client.getNickname() + " = " + channel + " :" + names);
-    client.sendMsg(":ft_irc 366 " + client.getNickname() + " " + channel + " :End of /NAMES list.");
+    server.sendToClient(client, ":ft_irc 353 " + client.getNickname() + " = " + channel + " :" + names);
+    server.sendToClient(client, ":ft_irc 366 " + client.getNickname() + " " + channel + " :End of /NAMES list.");
 }
 
 static void joinSingleChannel(Client &client, const std::string &channel, const std::string &key, Server &server)
 {
     if (channel.empty() || channel[0] != '#')
     {
-        client.sendMsg(":ft_irc 403 " + client.getNickname() + " " + channel + " :No such channel");
+        server.sendToClient(client, ":ft_irc 403 " + client.getNickname() + " " + channel + " :No such channel");
         return;
     }
 
@@ -44,18 +44,18 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
         {
             if (!chan->isInvited(client.getFd()))
             {
-                client.sendMsg(":ft_irc 473 " + client.getNickname() + " " + channel + " :Cannot join channel (+i)");
+                server.sendToClient(client, ":ft_irc 473 " + client.getNickname() + " " + channel + " :Cannot join channel (+i)");
                 return;
             }
         }
         if (!chan->getPassword().empty() && key != chan->getPassword())
         {
-            client.sendMsg(":ft_irc 475 " + client.getNickname() + " " + channel + " :Cannot join channel (+k)");
+            server.sendToClient(client, ":ft_irc 475 " + client.getNickname() + " " + channel + " :Cannot join channel (+k)");
             return;
         }
         if (chan->getUserLimit() > 0 && chan->getMemberCount() >= chan->getUserLimit())
         {
-            client.sendMsg(":ft_irc 471 " + client.getNickname() + " " + channel + " :Cannot join channel (+l)");
+            server.sendToClient(client, ":ft_irc 471 " + client.getNickname() + " " + channel + " :Cannot join channel (+l)");
             return;
         }
 
@@ -87,7 +87,7 @@ void joinCommand(Client &client, std::vector<std::string> &params, Server &serve
 {
     if (params.empty())
     {
-        client.sendMsg(":ft_irc 461 " + client.getNickname() + " JOIN :Not enough parameters");
+        server.sendToClient(client, ":ft_irc 461 " + client.getNickname() + " JOIN :Not enough parameters");
         return;
     }
 

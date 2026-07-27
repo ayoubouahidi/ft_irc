@@ -121,7 +121,6 @@ void Server::receiveFromClient(int fd)
             _commandHandler.executeCommand(msg, client, *this);
         }
     }
-
     else if (n == 0)
     {
         pending_data.erase(fd);
@@ -138,7 +137,6 @@ void Server::receiveFromClient(int fd)
         epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
         Clients.erase(fd);
     }
-    // here check the response! sendv
 }
 
 void Server::server_init()
@@ -148,7 +146,6 @@ void Server::server_init()
     // managing sockets with epoll
     setupEpoll();
     // connecting sockets
-    // one while!
     while (running)
     {
         int num_events = epoll_wait(epollfd, events, MAX_EVENTS, -1);
@@ -157,7 +154,11 @@ void Server::server_init()
             if (events[i].data.fd == serverSocket)
                 acceptClient();
             else
-                receiveFromClient(events[i].data.fd);
+            {
+                if (events[i].events & EPOLLIN)
+                    receiveFromClient(events[i].data.fd);
+                //check epollout here
+            }
         }
     }
     close(serverSocket);

@@ -3,11 +3,11 @@
 
 void privmsgCommand(Client& client, std::vector<std::string>& params, Server& server) {
     if (params.empty()) {
-        client.sendMsg("411 :No recipient given (PRIVMSG)");
+        server.sendToClient(client, "411 :No recipient given (PRIVMSG)");
         return;
     }
     if (params.size() < 2) {
-        client.sendMsg("412 :No text to send");
+        server.sendToClient(client, "412 :No text to send");
         return;
     }
 
@@ -17,11 +17,11 @@ void privmsgCommand(Client& client, std::vector<std::string>& params, Server& se
     if (target[0] == '#') {
         Channel* channel = server.getChannelByName(target);
         if (!channel) {
-            client.sendMsg("401 " + target + " :No such nick/channel");
+            server.sendToClient(client, "401 " + target + " :No such nick/channel");
             return;
         }
         if (!channel->hasClient(&client)) {
-            client.sendMsg("404 " + target + " :Cannot send to channel");
+            server.sendToClient(client, "404 " + target + " :Cannot send to channel");
             return;
         }
         std::string fullMsg = ":" + client.getNickname() + " PRIVMSG " + target + " :" + message;
@@ -31,7 +31,7 @@ void privmsgCommand(Client& client, std::vector<std::string>& params, Server& se
 
     Client* resclient = server.getClientByNickname(target);
     if (!resclient) {
-        client.sendMsg("401 " + target + " :No such nick/channel");
+        server.sendToClient(client, "401 " + target + " :No such nick/channel");
         return;
     }
 

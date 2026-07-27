@@ -142,14 +142,37 @@ void Client::clearBuffer()
     this->writeBuffer.clear();
 }
 
-void Client::sendMsg(const std::string& message) const
+bool Client::sendMsg(const std::string& message)
 {
     std::string msg = message + "\r\n";
 
-    if (send(fd, msg.c_str(), msg.length(), 0) == -1)
+    if (!writeBuffer.empty())
     {
-        std::cerr << "Error sending message to client: "
-                  << strerror(errno) << std::endl;
+        writeBuffer += msg;
+        return true;
+    }
+
+    ssize_t n = send(fd, msg.c_str(), msg.size(), 0);
+
+    if (n == (ssize_t)msg.size())
+        return false;
+    else if (n == -1)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            writeBuffer += msg;
+            // enable EPOLLOUT
+            return true;
+        }
+        else
+            throw std::runtime_error("send error");
+        return false;
+    }
+    else // 0 <= n < msg.size()
+    {
+        writeBuffer.append(msg.begin() + n, msg.end());
+        // enable EPOLLOUT
+        return true;
     }
 }
 

@@ -57,6 +57,10 @@ class Server
         void        setupEpoll();
         void        acceptClient();
         void        receiveFromClient(int fd);
+        void        sendToClient(Client& client, const std::string& msg);
+        void        enableEPOLLOUT(int fd);
+        void        disableEPOLLOUT(int fd);
+
 };
 
 extern bool running;

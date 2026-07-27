@@ -6,7 +6,7 @@ void kickCommand(Client &client, std::vector<std::string> &params, Server &serve
 {
     if (params.size() < 2)
     {
-        client.sendMsg("461 :Not enough parameters");
+        server.sendToClient(client, "461 :Not enough parameters");
         return;
     }
 
@@ -20,26 +20,26 @@ void kickCommand(Client &client, std::vector<std::string> &params, Server &serve
     Channel *channel = server.getChannelByName(channelName);
     if (!channel)
     {
-        client.sendMsg("403 " + channelName + " :No such channel");
+        server.sendToClient(client, "403 " + channelName + " :No such channel");
         return;
     }
 
     if (!channel->isMember(client.getFd()))
     {
-        client.sendMsg("442 " + channelName + " :You're not on that channel");
+        server.sendToClient(client, "442 " + channelName + " :You're not on that channel");
         return;
     }
 
     if (!channel->isOperator(client.getFd()))
     {
-        client.sendMsg("482 " + channelName + " :You're not channel operator");
+        server.sendToClient(client, "482 " + channelName + " :You're not channel operator");
         return;
     }
 
     Client *target = server.getClientByNickname(targetName);
     if (target == NULL || !channel->isMember(target->getFd()))
     {
-        client.sendMsg("441 " + targetName + " " + channelName + " :They aren't on that channel");
+        server.sendToClient(client, "441 " + targetName + " " + channelName + " :They aren't on that channel");
         return;
     }
 

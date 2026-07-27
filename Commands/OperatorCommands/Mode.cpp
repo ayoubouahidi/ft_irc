@@ -6,7 +6,7 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
 {
     if (params.empty())
     {
-        client.sendMsg("461 :Not enough parameters");
+        server.sendToClient(client, "461 :Not enough parameters");
         return;
     }
 
@@ -14,14 +14,14 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     if (nameChannel.empty() || nameChannel[0] != '#')
     {
-        client.sendMsg("502 :Cant change mode for other users");
+        server.sendToClient(client, "502 :Cant change mode for other users");
         return;
     }
 
     Channel *channel = server.getChannelByName(nameChannel);
     if (!channel)
     {
-        client.sendMsg("403 " + nameChannel + " :No such channel");
+        server.sendToClient(client, "403 " + nameChannel + " :No such channel");
         return;
     }
 
@@ -37,13 +37,13 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
         if (channel->getUserLimit() > 0)
             activeModes += "l";
 
-        client.sendMsg("324 " + client.getNickname() + " " + nameChannel + " " + activeModes);
+        server.sendToClient(client, "324 " + client.getNickname() + " " + nameChannel + " " + activeModes);
         return;
     }
 
     if (!channel->isOperator(&client))
     {
-        client.sendMsg("482 " + nameChannel + " :You're not channel operator");
+        server.sendToClient(client, "482 " + nameChannel + " :You're not channel operator");
         return;
     }
 
@@ -123,7 +123,7 @@ void modeCommand(Client &client, std::vector<std::string> &params, Server &serve
         else
         {
             std::string unknownchar(1, c);
-            client.sendMsg("472 " + unknownchar + " :is unknown mode char to me");
+            server.sendToClient(client, "472 " + unknownchar + " :is unknown mode char to me");
         }
     }
 

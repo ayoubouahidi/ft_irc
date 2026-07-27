@@ -5,35 +5,35 @@ void topicCommand(Client &client, std::vector<std::string> &params, Server &serv
 {
     if (params.empty())
     {
-        client.sendMsg("461 :Not enough parameters");
+        server.sendToClient(client, "461 :Not enough parameters");
         return;
     }
 
     Channel *channel = server.getChannelByName(params[0]);
     if (!channel)
     {
-        client.sendMsg("403 " + params[0] + " :No such channel");
+        server.sendToClient(client, "403 " + params[0] + " :No such channel");
         return;
     }
 
     if (!channel->isMember(client.getFd()))
     {
-        client.sendMsg("442 " + params[0] + " :You're not on that channel");
+        server.sendToClient(client, "442 " + params[0] + " :You're not on that channel");
         return;
     }
 
     if (params.size() < 2)
     {
         if (channel->getTopic().empty()) {
-            client.sendMsg("331 " + params[0] + " :No topic is set");
+            server.sendToClient(client, "331 " + params[0] + " :No topic is set");
         } else {
-            client.sendMsg("332 " + params[0] + " :" + channel->getTopic());
+            server.sendToClient(client, "332 " + params[0] + " :" + channel->getTopic());
         }
     }
     else
     {
         if (channel->isTopicRestricted() && !channel->isOperator(client.getFd())) {
-            client.sendMsg("482 " + params[0] + " :You're not channel operator");
+            server.sendToClient(client, "482 " + params[0] + " :You're not channel operator");
             return;
         }
         

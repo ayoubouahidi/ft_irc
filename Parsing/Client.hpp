@@ -50,7 +50,7 @@ class Client {
         std::string getNextmessage(); // return the extracted message 
         void appendToWriteBuffer(const std::string& data); // 
         void        clearBuffer();
-        void        sendMsg(const std::string& message) const;
+        bool        sendMsg(const std::string& message);
         std::string getPrefix() const;
         
 

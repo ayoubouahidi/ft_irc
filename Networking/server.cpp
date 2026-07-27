@@ -48,6 +48,32 @@ void Server::broadcast(const std::string& message, const std::string& excludedNi
 	}
 }
 
+void Server::sendToClient(Client& client, const std::string& msg)
+{
+    if (client.sendMsg(msg))
+        enableEPOLLOUT(client.getFd());
+}
+
+void Server::enableEPOLLOUT(int fd)
+{
+	epoll_event ev;
+
+	ev.data.fd = fd;
+	ev.events = EPOLLOUT;
+
+	epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev);
+}
+
+void Server::disableEPOLLOUT(int fd)
+{
+	epoll_event ev;
+
+	ev.data.fd = fd;
+	ev.events = EPOLLIN;
+
+	epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev);
+}
+
 Server::Server() : port(0), password("")
 {}
 

@@ -3,17 +3,17 @@
 
 void passCommand(Client& client, std::vector<std::string>& params, Server& server){
     if(params.empty() && !client.getIsRegistered()){
-        client.sendMsg("461 :Not enough parameters");
+        server.sendToClient(client, "461 :Not enough parameters");
         return;
     }
     if(client.getIsRegistered()){
-        client.sendMsg("462 :Unauthorized command (already registered)");
+        server.sendToClient(client, "462 :Unauthorized command (already registered)");
         return;
     }
     if(params[0] == server.getPaswd()){
         client.setIsPassVerified(true);
-        registerClient(client);
+        registerClient(client, server);
     }else{
-        client.sendMsg("464 :Password incorrect");
+        server.sendToClient(client, "464 :Password incorrect");
     }
 }
