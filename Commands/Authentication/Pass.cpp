@@ -2,7 +2,7 @@
 #include "../../Networking/server.hpp"
 
 void passCommand(Client& client, std::vector<std::string>& params, Server& server){
-    if(params.empty()){
+    if(params.empty() && !client.getIsRegistered()){
         client.sendMsg("461 :Not enough parameters");
         return;
     }

@@ -32,7 +32,7 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     client.setNickname(nickname);
 
-    if (!oldNick.empty() && oldNick != nickname)
+    if (client.getIsRegistered() && !oldNick.empty() && oldNick != nickname)
         server.broadcast(":" + oldNick + " NICK :" + nickname, "");
 
     registerClient(client);
