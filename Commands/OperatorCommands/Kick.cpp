@@ -18,7 +18,7 @@ void kickCommand(Client &client, std::vector<std::string> &params, Server &serve
         reason = params[2];
 
     Channel *channel = server.getChannelByName(channelName);
-    if (channel == NULL)
+    if (!channel)
     {
         client.sendMsg("403 " + channelName + " :No such channel");
         return;
