@@ -18,7 +18,7 @@ static std::string buildNamesList(Channel *chan)
     return names;
 }
 
-static void sendNamesReply(Client &client, const std::string &channel, Channel *chan)
+static void sendNamesReply(Client &client, const std::string &channel, Channel *chan, Server& server)
 {
     std::string names = buildNamesList(chan);
     server.sendToClient(client, ":ft_irc 353 " + client.getNickname() + " = " + channel + " :" + names);
@@ -65,7 +65,7 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
         std::string msgJoin = ":" + client.getNickname() + " JOIN :" + channel;
         chan->broadcast(msgJoin);
 
-        sendNamesReply(client, channel, chan);
+        sendNamesReply(client, channel, chan, server);
     }
     else
     {
@@ -79,7 +79,7 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
         std::string msgJoin = ":" + client.getNickname() + " JOIN :" + channel;
         newChannel->broadcast(msgJoin);
 
-        sendNamesReply(client, channel, newChannel);
+        sendNamesReply(client, channel, newChannel, server);
     }
 }
 

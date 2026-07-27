@@ -157,7 +157,13 @@ void Server::server_init()
             {
                 if (events[i].events & EPOLLIN)
                     receiveFromClient(events[i].data.fd);
-                //check epollout here
+                if (events[i].events & EPOLLOUT)
+                {
+
+                    Client& client = Clients[events[i].data.fd];
+                    if (client.flushWriteBuffer())
+                        disableEPOLLOUT(client.getFd());
+                }
             }
         }
     }

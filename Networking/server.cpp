@@ -44,7 +44,8 @@ void Server::broadcast(const std::string& message, const std::string& excludedNi
 	{
 		if (!excludedNickname.empty() && it->second.getNickname() == excludedNickname)
 			continue;
-		it->second.sendMsg(message);
+		if (it->second.sendMsg(message))
+    		enableEPOLLOUT(it->second.getFd());
 	}
 }
 
@@ -59,20 +60,22 @@ void Server::enableEPOLLOUT(int fd)
 	epoll_event ev;
 
 	ev.data.fd = fd;
-	ev.events = EPOLLOUT;
+	ev.events = EPOLLIN | EPOLLOUT;
 
-	epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev);
+	if (epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev) == -1)
+		std::runtime_error("epol_ctl_mode error");
 }
 
-void Server::disableEPOLLOUT(int fd)
-{
-	epoll_event ev;
+// void Server::disableEPOLLOUT(int fd)
+// {
+// 	epoll_event ev;
 
-	ev.data.fd = fd;
-	ev.events = EPOLLIN;
+// 	ev.data.fd = fd;
+// 	ev.events = EPOLLIN;
 
-	epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev);
-}
+// 	if (epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev) == -1)
+// 		std::runtime_error("epol_ctl_mode error");
+// }
 
 Server::Server() : port(0), password("")
 {}

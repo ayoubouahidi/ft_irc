@@ -31,7 +31,7 @@ void kickCommand(Client &client, std::vector<std::string> &params, Server &serve
 void inviteCommand(Client &client, std::vector<std::string> &params, Server &server);
 void topicCommand(Client &client, std::vector<std::string> &params, Server &server);
 void modeCommand(Client &client, std::vector<std::string> &params, Server &server);
-void registerClient(Client &client, Server& server)
+void registerClient(Client &client, Server& server);
 
 class CommandHandler
 {

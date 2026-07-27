@@ -51,6 +51,7 @@ class Client {
         void appendToWriteBuffer(const std::string& data); // 
         void        clearBuffer();
         bool        sendMsg(const std::string& message);
+        bool        flushWriteBuffer();
         std::string getPrefix() const;
         
 

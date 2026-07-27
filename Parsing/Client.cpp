@@ -142,6 +142,22 @@ void Client::clearBuffer()
     this->writeBuffer.clear();
 }
 
+bool Client::flushWriteBuffer()
+{
+    while (!writeBuffer.empty())
+    {
+        ssize_t n = send(fd, writeBuffer.c_str(), writeBuffer.size(), 0);
+
+        if (n > 0)
+            writeBuffer.erase(0, n);
+        else if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+            return false;
+        else
+            throw std::runtime_error("send error");
+    }
+    return true;
+}
+
 bool Client::sendMsg(const std::string& message)
 {
     std::string msg = message + "\r\n";
@@ -161,7 +177,6 @@ bool Client::sendMsg(const std::string& message)
         if (errno == EAGAIN || errno == EWOULDBLOCK)
         {
             writeBuffer += msg;
-            // enable EPOLLOUT
             return true;
         }
         else
@@ -171,7 +186,6 @@ bool Client::sendMsg(const std::string& message)
     else // 0 <= n < msg.size()
     {
         writeBuffer.append(msg.begin() + n, msg.end());
-        // enable EPOLLOUT
         return true;
     }
 }
@@ -181,6 +195,3 @@ std::string Client::getPrefix() const
     std::string prefix = ":" + this->nickname + "!" + this->username + "@" + this->hostname;
     return prefix;
 }
-
-
-
