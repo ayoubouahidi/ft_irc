@@ -13,7 +13,7 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
 
     for (size_t i = 0; i < nickname.size(); i++)
     {
-        if (nickname[i] == ' ' || nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
+        if (nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
         {
             client.sendMsg("432 :Erroneous nickname");
             return;
