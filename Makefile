@@ -1,87 +1,43 @@
-# IRC Server Makefile
+NAME = ft_irc
 
-CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++11 -g
-LDFLAGS := -lpthread
+CC = c++
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-# Output binary name
-TARGET := irc_server
+SRCS = Commands/Authentication/Nick.cpp \
+		Commands/CommandHandler.cpp \
+		Commands/Authentication/Pass.cpp \
+		Commands/Authentication/Register.cpp \
+		Commands/Authentication/User.cpp \
+		Commands/ChannelMessages/Join.cpp \
+		Commands/ChannelMessages/Privmsg.cpp \
+		Commands/OperatorCommands/Invite.cpp \
+		Commands/OperatorCommands/Kick.cpp \
+		Commands/OperatorCommands/Mode.cpp \
+		Commands/OperatorCommands/Topic.cpp \
+		Networking/server_init.cpp \
+		Networking/server.cpp \
+		Parsing/Channel.cpp \
+		Parsing/Client.cpp \
+		main.cpp
 
-# Directories
-BUILD_DIR := build
-OBJ_DIR := $(BUILD_DIR)/objects
-DEP_DIR := $(BUILD_DIR)/deps
+OBJS = $(SRCS:%.cpp=%.o)
 
-# Source files
-SOURCES := main.cpp \
-	Networking/server.cpp \
-	Networking/server_init.cpp \
-	Parsing/Channel.cpp \
-	Parsing/Client.cpp \
-	Commands/CommandHandler.cpp \
-	Commands/Authentication/Nick.cpp \
-	Commands/Authentication/Pass.cpp \
-	Commands/Authentication/Register.cpp \
-	Commands/Authentication/User.cpp \
-	Commands/ChannelMessages/Join.cpp \
-	Commands/ChannelMessages/Privmsg.cpp \
-	Commands/OperatorCommands/Invite.cpp \
-	Commands/OperatorCommands/Kick.cpp \
-	Commands/OperatorCommands/Mode.cpp \
-	Commands/OperatorCommands/Topic.cpp
+all: $(NAME)
 
-# Object files
-OBJECTS := $(SOURCES:%.cpp=$(OBJ_DIR)/%.o)
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 
-# Dependency files
-DEPENDS := $(SOURCES:%.cpp=$(DEP_DIR)/%.d)
+%.o: %.cpp
+	$(CC) $(CFLAGS)  -c $< -o $@
 
-# Include paths
-INCLUDES := -I. -INetworking -IParsing -ICommands
-
-# Default target
-all: $(TARGET)
-
-# Link target
-$(TARGET): $(OBJECTS)
-	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS)
-	@echo "✓ Build complete: $(TARGET)"
-
-# Compile object files
-$(OBJ_DIR)/%.o: %.cpp
-	@mkdir -p $(dir $@)
-	@mkdir -p $(dir $(DEP_DIR)/$*)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -MMD -MP -MF $(DEP_DIR)/$*.d -c $< -o $@
-	@echo "✓ Compiled: $<"
-
-# Include dependency files
--include $(DEPENDS)
-
-# Clean build files
 clean:
-	rm -rf $(BUILD_DIR)
-	@echo "✓ Clean complete"
+	rm -rf $(OBJS)
 
-# Deep clean (removes object files in root)
-distclean: clean
-	rm -f **/*.o
-	@echo "✓ Distclean complete"
+fclean: clean
+	rm -rf $(NAME)
 
-# Rebuild
-rebuild: clean all
+re: fclean all
 
-# Help
-help:
-	@echo "IRC Server Makefile"
-	@echo "==================="
-	@echo "Targets:"
-	@echo "  all       - Build the project (default)"
-	@echo "  clean     - Remove build directory and binary"
-	@echo "  distclean - Remove all generated files"
-	@echo "  rebuild   - Clean and build"
-	@echo "  help      - Show this help message"
-	@echo ""
-	@echo "Compilation flags: $(CXXFLAGS)"
+.PHONY: all clean fclean re
 
-.PHONY: all clean distclean rebuild help
+.SECONDARY: ${OBJS}

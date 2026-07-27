@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "Networking/server.hpp"
 
 bool running = true;
 
@@ -15,7 +15,9 @@ static int server_set(int ac, char **av)
     if (ac != 3)
         throw std::runtime_error("Short on args");
     av++;
-    int prt = std::stoi(av[0]);
+    std::stringstream ss(av[0]);
+    int prt;
+    ss >> prt;
     if (prt < 1024 || prt > 65535)
         throw std::runtime_error("invalid port");
     return prt;

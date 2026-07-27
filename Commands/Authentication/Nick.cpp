@@ -1,39 +1,5 @@
-#include "CommandHandler.hpp"
-#include "../../Networking/server.hpp"
-
-
-
-
-
-#include <string>
-#include <cctype>
-
-bool isValidNickname(const std::string &nick)
-{
-    if (nick.empty() || nick.size() > 9)
-        return false;
-
-    static const std::string special = "[]\\`_^{}|-";
-
-    for (size_t i = 0; i < nick.size(); i++)
-    {
-        char c = nick[i];
-
-        if (i == 0)
-        {
-            if (!std::isalpha(c) && !(special.find(c) != std::string::npos && c != '-'))
-                return false;
-        }
-        else
-        {
-            if (!std::isalpha(c) && !std::isdigit(c) && special.find(c) == std::string::npos)
-                return false;
-        }
-    }
-
-    return true;
-}
-
+#include "../CommandHandler.hpp"
+#include "../../Networking/server.hpp" 
 
 void nickCommand(Client &client, std::vector<std::string> &params, Server &server)
 {
@@ -44,29 +10,29 @@ void nickCommand(Client &client, std::vector<std::string> &params, Server &serve
     }
 
     std::string nickname = params[0];
-    if (!isValidNickname(nickname))
-    {
-        client.sendMsg("432 :Erroneous nickname");
-        return;
-    }
 
-    Client *tmp = server.getClientByNickname(nickname);
-
-    if (tmp)
+    for (size_t i = 0; i < nickname.size(); i++)
     {
-        if (tmp != &client)
+        if (nickname[i] == ' ' || nickname[i] == '#' || nickname[i] == '*' || nickname[i] == ':')
         {
-            client.sendMsg("433 :Nickname is already in use");
+            client.sendMsg("432 :Erroneous nickname");
             return;
         }
     }
 
-    bool wasRegistered =client.getIsRegistered();
+    Client *tmp = server.getClientByNickname(nickname);
+
+    if (tmp && tmp != &client)
+    {
+        client.sendMsg("433 :Nickname is already in use");
+        return;
+    }
+
     std::string oldNick = client.getNickname();
 
     client.setNickname(nickname);
 
-    if (wasRegistered && oldNick != nickname)
+    if (!oldNick.empty() && oldNick != nickname)
         server.broadcast(":" + oldNick + " NICK :" + nickname, "");
 
     registerClient(client);

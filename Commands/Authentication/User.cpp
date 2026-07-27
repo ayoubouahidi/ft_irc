@@ -1,4 +1,4 @@
-#include "CommandHandler.hpp"
+#include "../CommandHandler.hpp"
 #include "../../Networking/server.hpp"
 
 void userCommand(Client &client, std::vector<std::string> &params, Server &server)

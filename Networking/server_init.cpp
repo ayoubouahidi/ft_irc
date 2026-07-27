@@ -18,8 +18,8 @@ Message parseMessage(const std::string &line)
     {
         msg.command = token;
         // Convert command to uppercase
-        for (char &c : msg.command)
-            c = std::toupper(c);
+        for (size_t i = 0; i < msg.command.size(); i++)
+            msg.command[i] = std::toupper(msg.command[i]);
     }
 
     size_t trailingPos = line.find(" :");

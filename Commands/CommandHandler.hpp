@@ -7,11 +7,11 @@
 #include <map>
 #include <sstream>
 #include <unistd.h>
-#include "Client.hpp"
-#include "Channel.hpp"
+#include "../Parsing/Client.hpp"
+#include "../Parsing/Channel.hpp"
 
-class Client;
 class Server;
+class Client;
 
 struct Message
 {

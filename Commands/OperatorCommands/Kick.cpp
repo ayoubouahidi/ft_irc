@@ -1,4 +1,4 @@
-#include "CommandHandler.hpp"
+#include "../CommandHandler.hpp"
 #include "../../Networking/server.hpp"
 
 // KICK #foot Youssef :Stop spamming stp

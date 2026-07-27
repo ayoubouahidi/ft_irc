@@ -14,6 +14,7 @@
 #include <map>
 #include <arpa/inet.h>
 #include <signal.h>
+#include <sstream>
 
 #define MAX_EVENTS 10
 #include "../Parsing/Client.hpp"
@@ -24,14 +25,6 @@ struct Message;
 
 // Function to parse IRC protocol messages
 Message parseMessage(const std::string& line);
-
-// struct Client
-// {
-//     int fd;
-//     std::string written_data;
-//     std::string read_data;
-//     bool complete;
-// };
 
 class Server
 {
