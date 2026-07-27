@@ -93,9 +93,9 @@ void Server::acceptClient()
     else
     {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
-            std::cout << "block end" << std::endl;
+            return ;
         else
-            std::cout << "real recv error";
+            throw std::runtime_error("accept error");
     }
 }
 
