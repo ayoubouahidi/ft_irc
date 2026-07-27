@@ -42,8 +42,7 @@ static void joinSingleChannel(Client &client, const std::string &channel, const 
 
         if (chan->isInviteOnly())
         {
-            if (chan->isInvited(client.getFd())){}
-            else
+            if (!chan->isInvited(client.getFd()))
             {
                 client.sendMsg(":ft_irc 473 " + client.getNickname() + " " + channel + " :Cannot join channel (+i)");
                 return;
