@@ -153,7 +153,10 @@ bool Client::flushWriteBuffer()
         else if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
             return false;
         else
-            throw std::runtime_error("send error");
+        {
+            std::cerr << "send error\n";
+            return false;
+        }
     }
     return true;
 }
@@ -179,8 +182,7 @@ bool Client::sendMsg(const std::string& message)
             writeBuffer += msg;
             return true;
         }
-        else
-            throw std::runtime_error("send error");
+        std::cerr << "send error\n";
         return false;
     }
     else // 0 <= n < msg.size()

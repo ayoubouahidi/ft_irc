@@ -63,7 +63,10 @@ void Server::enableEPOLLOUT(int fd)
 	ev.events = EPOLLIN | EPOLLOUT;
 
 	if (epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev) == -1)
-		std::runtime_error("epol_ctl_mode error");
+	{
+		std::cerr << "epol_ctl_mode error\n";
+		return ;
+	}
 }
 
 void Server::disableEPOLLOUT(int fd)
@@ -74,7 +77,10 @@ void Server::disableEPOLLOUT(int fd)
 	ev.events = EPOLLIN;
 
 	if (epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &ev) == -1)
-		std::runtime_error("epol_ctl_mode error");
+	{
+		std::cerr << "epol_ctl_mode error\n";
+		return ;
+	}
 }
 
 Server::Server() : port(0), password("")

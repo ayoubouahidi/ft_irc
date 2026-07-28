@@ -51,7 +51,10 @@ void Server::createSocket()
     // SOCK_STREAM FOR TCP CONNECTION and 0 is a default for it
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1)
-        throw std::runtime_error("socket issue");
+    {
+        std::cerr << "socket issue\n";
+        return ;
+    }
     // specifying the server address cuz it has important data for binding
     sockaddr_in addr;
     addr.sin_family = AF_INET;
@@ -61,18 +64,30 @@ void Server::createSocket()
     // it helps rebinding the same port if an issue occured (like ctrl+c)
     int opt = 1;
     if(setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-        throw std::runtime_error("setsockopt error");
+    {
+        std::cerr << "setsockopt error\n";
+        return ;
+    }
 
     // binding ip/port to the server
     if (bind(serverSocket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-        throw std::runtime_error("bind error");
+    {
+        std::cerr << "bind error\n";
+        return ;
+    }
 
     // listenning to clients requests 5 max
     if (listen(serverSocket, 5) == -1)
-        throw std::runtime_error("listen error");
+    {
+        std::cerr << "listen error\n";
+        return ;
+    }
 
     if (fcntl(serverSocket, F_SETFL, O_NONBLOCK) == -1)
-        throw std::runtime_error("fcntl failed");
+    {
+        std::cerr << "fcntl error\n";
+        return ;
+    }
 }
 
 void Server::setupEpoll()
@@ -90,30 +105,34 @@ void Server::acceptClient()
     {
         if (fcntl(newsocket, F_SETFL, O_NONBLOCK) == -1)
         {
+            std::cerr << "fcntl failed\n";
             close(newsocket);
-            throw std::runtime_error("fcntl failed");
+            return ;
         }
         Clients[newsocket] = Client(newsocket);
         event.events = EPOLLIN;
         event.data.fd = newsocket;
         if (epoll_ctl(epollfd, EPOLL_CTL_ADD, newsocket, &event) == -1)
         {
+            std::cerr << "epoll_ctl error\n";
+            Clients.erase(newsocket);
             close(newsocket);
-            throw std::runtime_error("epoll_ctl error");
+            return ;
         }
     }
     else
     {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return ; // no more clients
-        throw std::runtime_error("accept error");
+        std::cerr << "accept error\n";
+        return ;
     }
 }
 
 void Server::receiveFromClient(int fd)
 {
     char buffer[1024] = {0};
-    std::map<int, std::string> pending_data;
+    static std::map<int, std::string> pending_data;
     Client &client = Clients[fd];
     int n = recv(fd, buffer, sizeof(buffer), 0);
 
@@ -149,7 +168,8 @@ void Server::receiveFromClient(int fd)
         pending_data.erase(fd);
         close(fd);
         Clients.erase(fd);
-        throw std::runtime_error("receive error");
+        std::cerr << "receive error\n";
+        return ;
     }
 }
 
