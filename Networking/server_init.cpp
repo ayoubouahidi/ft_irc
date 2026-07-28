@@ -113,7 +113,7 @@ void Server::acceptClient()
 void Server::receiveFromClient(int fd)
 {
     char buffer[1024] = {0};
-    static std::map<int, std::string> pending_data;
+    std::map<int, std::string> pending_data;
     Client &client = Clients[fd];
     int n = recv(fd, buffer, sizeof(buffer), 0);
 
@@ -122,11 +122,13 @@ void Server::receiveFromClient(int fd)
         pending_data[fd].append(buffer, n);
         while (true)
         {
-            size_t pos = pending_data[fd].find("\r\n");
+            size_t pos = pending_data[fd].find("\n");
             if (pos == std::string::npos)
                 break;
             std::string line = pending_data[fd].substr(0, pos);
-            pending_data[fd].erase(0, pos + 2);
+            if (!line.empty() && line[line.size() - 1] == '\r')
+                line.erase(line.size() - 1);
+            pending_data[fd].erase(0, pos + 1);
             // //COMMAND PARSING HNA 3YT FUNC(CLIENT, LINE);
             Message msg = parseMessage(line);
             _commandHandler.executeCommand(msg, client, *this);
