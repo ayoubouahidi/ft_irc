@@ -70,6 +70,9 @@ void Server::createSocket()
     // listenning to clients requests 5 max
     if (listen(serverSocket, 5) == -1)
         throw std::runtime_error("listen error");
+
+    if (fcntl(serverSocket, F_SETFL, O_NONBLOCK) == -1)
+        throw std::runtime_error("fcntl failed");
 }
 
 void Server::setupEpoll()
@@ -85,11 +88,19 @@ void Server::acceptClient()
     int newsocket = accept(serverSocket, 0, 0);
     if (newsocket != -1)
     {
+        if (fcntl(newsocket, F_SETFL, O_NONBLOCK) == -1)
+        {
+            close(newsocket);
+            throw std::runtime_error("fcntl failed");
+        }
         Clients[newsocket] = Client(newsocket);
         event.events = EPOLLIN;
         event.data.fd = newsocket;
         if (epoll_ctl(epollfd, EPOLL_CTL_ADD, newsocket, &event) == -1)
+        {
+            close(newsocket);
             throw std::runtime_error("epoll_ctl error");
+        }
     }
     else
     {
@@ -123,19 +134,20 @@ void Server::receiveFromClient(int fd)
     }
     else if (n == 0)
     {
+        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, NULL);
         pending_data.erase(fd);
         close(fd);
-        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
         Clients.erase(fd);
     }
     else
     {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return;
+        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, NULL);
         pending_data.erase(fd);
         close(fd);
-        epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, &event);
         Clients.erase(fd);
+        throw std::runtime_error("receive error");
     }
 }
 
